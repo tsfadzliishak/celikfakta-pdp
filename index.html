@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CelikFakta PdP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Susun atur: satu lajur bacaan di bawah bar kursus melekit; setiap unit memakai warna dimensinya; kuning penanda untuk perkara yang perlu disemak */
+  --paper:#F2F4F9; --surface:#FFFFFF; --ink:#14213D; --muted:#56617D; --line:#D5DBE8;
+  --marker:#FFD84A; --on-marker:#14213D; --accent:#1F3FA6; --on-accent:#FFFFFF; --tint:#E9EEFB;
+  --kesahan:#1B5FA8; --ketepatan:#0B7A68; --bias:#A12C66;
+  --good:#17754A; --good-bg:#E3F4EA; --warn:#8A5A00; --warn-bg:#FBF0D3; --bad:#B83227; --bad-bg:#FBE6E3;
+  --font-display:'Poppins','Segoe UI',system-ui,sans-serif;
+  --font-body:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+  --dim:var(--accent);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#0F1626; --surface:#18223A; --ink:#E9EDF6; --muted:#A3AECA; --line:#2C3958;
+    --accent:#9DB6FF; --on-accent:#0F1626; --tint:#1F2C4D;
+    --kesahan:#7FB2F0; --ketepatan:#5FD0BC; --bias:#F08DB8;
+    --good:#5ADB97; --good-bg:#14321F; --warn:#FFBD5C; --warn-bg:#38290C; --bad:#FF8273; --bad-bg:#3B1B18;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0F1626; --surface:#18223A; --ink:#E9EDF6; --muted:#A3AECA; --line:#2C3958;
+  --accent:#9DB6FF; --on-accent:#0F1626; --tint:#1F2C4D;
+  --kesahan:#7FB2F0; --ketepatan:#5FD0BC; --bias:#F08DB8;
+  --good:#5ADB97; --good-bg:#14321F; --warn:#FFBD5C; --warn-bg:#38290C; --bad:#FF8273; --bad-bg:#3B1B18;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.6 var(--font-body);-webkit-text-size-adjust:100%}
+h1,h2,h3,h4{font-family:var(--font-display);line-height:1.2;margin:0;text-wrap:balance}
+h1{font-size:clamp(2rem,5vw,3rem);font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.4rem;font-weight:600}
+h3{font-size:1.08rem;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+mark{background:var(--marker);color:var(--on-marker);padding:0 .18em;border-radius:3px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+:focus-visible{outline:3px solid var(--marker);outline-offset:2px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+/* bar kursus */
+.bar{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:20px;min-height:58px}
+.brand{font:700 1.05rem var(--font-display);color:var(--ink);text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.brand i{display:inline-block;width:22px;height:12px;background:var(--marker);border-radius:2px;transform:rotate(-8deg)}
+.nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-left:auto}
+.nav::-webkit-scrollbar{display:none}
+.nav a{font:500 .88rem var(--font-display);color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:8px;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.nav a:hover{color:var(--ink);background:var(--tint)}
+.nav a[aria-current="page"]{color:var(--ink);background:var(--tint)}
+.nav .st{width:8px;height:8px;border-radius:50%;background:var(--line);flex:none}
+.nav .st.done{background:var(--good)}
+.nav .st.lock{background:none;border:1.5px solid var(--muted)}
+
+main{padding:36px 0 64px}
+main section{margin-top:44px}
+.eyebrow{font:600 .8rem var(--font-display);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.lead{font-size:1.15rem;color:var(--muted);max-width:62ch}
+.hero{margin-top:8px;display:flex;flex-direction:column;gap:16px}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
+.btn{font:600 .95rem var(--font-display);background:var(--accent);color:var(--on-accent);border:2px solid var(--accent);border-radius:10px;padding:10px 20px;text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.small{padding:6px 12px;font-size:.85rem}
+.btn[disabled]{opacity:.45;cursor:not-allowed;filter:none}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.stack{display:flex;flex-direction:column;gap:14px}
+.muted{color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:6px;font:600 .75rem var(--font-display);padding:3px 10px;border-radius:99px;background:var(--tint);color:var(--muted);white-space:nowrap}
+.pill.good{background:var(--good-bg);color:var(--good)}
+.pill.warn{background:var(--warn-bg);color:var(--warn)}
+.pill.bad{background:var(--bad-bg);color:var(--bad)}
+.pill.dim{background:transparent;border:1.5px solid var(--dim);color:var(--dim)}
+
+/* laluan */
+.path{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.path a{display:grid;grid-template-columns:38px 1fr auto;gap:14px;align-items:center;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--dim);border-radius:12px;padding:14px 18px}
+.path a:hover{border-color:var(--dim)}
+.path .num{font:700 1.3rem var(--font-display);color:var(--dim);font-variant-numeric:tabular-nums}
+.path b{font:600 1rem var(--font-display);display:block}
+.path small{color:var(--muted);font-size:.9rem}
+.dims{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:16px}
+.dims .card{border-top:5px solid var(--dim);display:flex;flex-direction:column;gap:10px}
+.dims ul{margin:0;padding-left:1.1em;color:var(--muted);font-size:.95rem}
+.outcomes{margin:14px 0 0;padding-left:1.3em;max-width:68ch}
+.outcomes li{margin:6px 0}
+
+/* soalan */
+.progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--dim);border-radius:99px}
+.scen{border-left:4px solid var(--marker);background:var(--surface);padding:14px 18px;border-radius:0 10px 10px 0;font-style:italic;overflow-wrap:anywhere}
+.q{font:600 1.08rem/1.45 var(--font-display)}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:grid;grid-template-columns:32px 1fr;gap:12px;align-items:start;text-align:left;font:inherit;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;overflow-wrap:anywhere}
+.opt:hover:not([disabled]){border-color:var(--dim)}
+.opt .ltr{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:600 .9rem var(--font-display);background:var(--tint);color:var(--muted)}
+.opt.sel{border-color:var(--dim);background:var(--tint)}
+.opt.sel .ltr{background:var(--dim);color:var(--surface)}
+.opt.right{border-color:var(--good);background:var(--good-bg)}
+.opt.right .ltr{background:var(--good);color:var(--surface)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.opt.wrong .ltr{background:var(--bad);color:var(--surface)}
+.opt[disabled]{cursor:default}
+.why{border-radius:10px;padding:10px 14px;font-size:.96rem}
+.why.good{background:var(--good-bg)} .why.bad{background:var(--bad-bg)} .why.warn{background:var(--warn-bg)}
+.why b{font-family:var(--font-display);font-weight:600}
+.why.good b{color:var(--good)} .why.bad b{color:var(--bad)} .why.warn b{color:var(--warn)}
+.rowbtn{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* skor */
+.scores{display:flex;flex-direction:column;gap:16px}
+.score-row{display:grid;grid-template-columns:110px 1fr;gap:6px 16px;align-items:center}
+.score-row h3{color:var(--dim)}
+.bars{display:flex;flex-direction:column;gap:6px}
+.barline{display:grid;grid-template-columns:86px 1fr 34px;gap:10px;align-items:center;font-size:.86rem;color:var(--muted)}
+.track{height:14px;background:var(--line);border-radius:4px;overflow:hidden}
+.track i{display:block;height:100%;background:var(--dim);border-radius:4px}
+.track.pre i{opacity:.45}
+.barline b{font:600 .9rem var(--font-display);color:var(--ink);font-variant-numeric:tabular-nums;text-align:right}
+
+/* unit */
+.unit-head{display:flex;flex-direction:column;gap:12px}
+.objs{margin:4px 0 0;padding-left:1.2em;max-width:68ch}
+.sec-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--dim)}
+.sec-head .n{font:700 1.4rem var(--font-display);color:var(--dim)}
+.sec-head .t{margin-left:auto;font:500 .85rem var(--font-display);color:var(--muted)}
+.video-box{background:#0F1A33;border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+.video-box video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#0F1A33}
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 18px}
+summary{font:600 .95rem var(--font-display);cursor:pointer}
+details ol{margin:10px 0 4px;padding-left:1.3em}
+.topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.topics .card{display:flex;flex-direction:column;gap:8px}
+.topics .tn{font:600 .8rem var(--font-display);color:var(--dim);letter-spacing:.08em}
+.tool{font-size:.92rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px;margin-top:auto}
+.tool b{color:var(--ink);font-family:var(--font-display);font-weight:600;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;display:block}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:600 .88rem var(--font-display);background:var(--surface);color:var(--ink);border:2px solid var(--line);border-radius:99px;padding:6px 14px;cursor:pointer}
+.chip:hover:not([disabled]){border-color:var(--dim)}
+.chip.right{border-color:var(--good);background:var(--good-bg);color:var(--good)}
+.chip.wrong{border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
+.chip[disabled]{cursor:default}
+.item{display:flex;flex-direction:column;gap:10px}
+.item + .item{border-top:1px solid var(--line);padding-top:16px}
+textarea,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:10px;padding:10px 12px}
+textarea{min-height:92px;resize:vertical}
+label{font:600 .92rem var(--font-display);display:block;margin-bottom:6px}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em;background:var(--tint);padding:1px 6px;border-radius:5px;overflow-wrap:anywhere}
+.voice{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:.92rem}
+.unit-nav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:44px}
+
+/* kit alat */
+.kit{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-top:16px}
+.kit ol{margin:8px 0 0;padding-left:1.3em}
+.kit li{margin:6px 0}
+.links{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+.links a{display:block;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px}
+.links a:hover{border-color:var(--accent)}
+.links a{display:flex;gap:14px;align-items:center}
+.ticon{position:relative;width:40px;height:40px;flex:none;border-radius:10px;background:var(--tint);display:grid;place-items:center;overflow:hidden}
+.ticon i{font:600 1.05rem var(--font-display);font-style:normal;color:var(--accent)}
+.ticon img{position:absolute;inset:0;width:100%;height:100%;padding:6px;background:#fff;object-fit:contain}
+.links b{font:600 .98rem var(--font-display);display:block;color:var(--accent)}
+.links small{color:var(--muted);font-size:.88rem}
+
+/* lencana & sijil */
+.badges{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:16px}
+.badge{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.badge .disc{width:52px;height:52px;border-radius:50%;flex:none;display:grid;place-items:center;font:700 1.2rem var(--font-display);border:3px dashed var(--line);color:var(--muted)}
+.badge.on .disc{background:var(--dim);border:3px solid var(--dim);color:var(--surface)}
+.badge b{font:600 1rem var(--font-display);display:block}
+.cert{margin-top:16px;background:var(--surface);border:2px solid var(--ink);outline:6px solid var(--marker);outline-offset:-14px;border-radius:6px;padding:44px 32px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+.cert .nm{font:700 clamp(1.4rem,4vw,2rem) var(--font-display);border-bottom:2px solid var(--ink);padding:0 20px 6px;min-width:min(320px,80%);overflow-wrap:anywhere}
+.cert small{color:var(--muted)}
+
+footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);font-size:.9rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between}
+.linkbtn{font:inherit;color:var(--accent);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+@media (max-width:560px){
+  body{font-size:16px}
+  .score-row{grid-template-columns:1fr}
+  .path a{grid-template-columns:30px 1fr}
+  .path .pill{grid-column:2;justify-self:start}
+  .sec-head .t{margin-left:0;width:100%}
+  .cert{padding:36px 22px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <a class="brand" href="#utama"><i></i>CelikFakta PdP</a>
+    <nav class="nav" id="nav" aria-label="Halaman modul"></nav>
+  </div>
+</header>
+<main><div class="wrap" id="app"></div></main>
+<footer>
+  <div class="wrap">
+    <span id="footNote">Prototaip. Kemajuan disimpan pada pelayar ini sahaja.</span>
+    <span style="display:flex;gap:18px;flex-wrap:wrap">
+      <button class="linkbtn" id="resetBtn" type="button">Set semula kemajuan</button>
+    </span>
+  </div>
+</footer>
+
+<script>
+/* ================= KANDUNGAN ================= */
+const ORDER = ['kesahan', 'ketepatan', 'bias'];
+
+const U = {
+ kesahan: {
+  n:1, name:'Kesahan', q:'Siapa yang berkata, dan adakah mereka layak?', file:'unit1-kesahan',
+  intro:'Unit ini melatih anda menentukan sama ada sesuatu sumber sah sebelum menilai isinya, menggunakan teknik bacaan lateral: keluar dari laman itu untuk menyemak siapa di belakangnya.',
+  objs:['Menilai kepakaran penulis mengikut bidang.','Membezakan jurnal berwasit, jurnal pemangsa dan bukti anekdot.','Mengesan domain palsu.','Mengesan tanda media sintetik.'],
+  hook:{s:'Seorang individu bergelar Profesor Doktor (PhD) dalam Kejuruteraan Mekanikal menulis hantaran panjang di media sosial. Beliau mendakwa disleksia hanyalah "kemalasan membaca" dan bukan gangguan neurologi. Hantaran itu dikongsi 12,400 kali.',
+        q:'Adakah hantaran ini sah dirujuk untuk intervensi pendidikan khas?', o:['Ya','Tidak pasti','Tidak'],
+        r:'Gelaran dan bilangan perkongsian bukan ukuran kesahan. Kepakaran beliau berada di luar bidang neurologi, psikologi dan pendidikan khas. Video di bawah menunjukkan cara menyemaknya langkah demi langkah.'},
+  script:['Sebelum menilai isi, nilai dahulu sumbernya.','Bacaan lateral: buka tab baharu dan semak apa kata pihak lain tentang penulis atau penerbit.','Autoriti: gelaran akademik bukan kepakaran dalam semua bidang. Semak profil di laman universiti, Google Scholar atau ORCID.','Kualiti bukti: anekdot paling lemah, meta-analisis paling kukuh. Jurnal pemangsa menerbitkan apa sahaja asalkan dibayar.','Domain: domain sebenar ialah bahagian terakhir sebelum garis condong pertama. HTTPS dan logo rasmi boleh ditiru.','Media: wajah dan suara boleh dijana AI. Sahkan dengan sumber rasmi sebelum percaya atau berkongsi.','Ringkasan Kad SIFT: Berhenti, Siasat sumber, Cari liputan lain, Jejak ke asal.'],
+  topics:[
+   ['1.1','Autoriti & kepakaran','Kelayakan dalam bidang berbanding luar bidang, dan afiliasi institusi penulis.','Profil di laman universiti, Google Scholar, ORCID'],
+   ['1.2','Proses penerbitan & kualiti bukti','Piramid bukti daripada anekdot hingga meta-analisis, serta ciri jurnal pemangsa.','Think. Check. Submit., indeks Scopus atau Web of Science'],
+   ['1.3','Ketulenan domain & laman','Struktur domain rasmi seperti .gov.my dan .edu.my. HTTPS bukan bukti laman itu sah.','Baca domain sebelum garis condong pertama; taip sendiri alamat rasmi'],
+   ['1.4','Ketulenan media','Deepfake audio dan video, gambar lama yang dikitar semula, imej janaan AI.','Carian imej songsang (Google Lens, TinEye), sebenarnya.my, BERNAMA']],
+  act:{name:'Detektif Sumber', d:'Empat item sampai ke telefon anda hari ini. Gunakan Kad SIFT dan beri keputusan bagi setiap satu.', o:['Sah','Diragui','Tidak sah'],
+   items:[
+    {t:'Hantaran Facebook seorang "pakar motivasi terkenal" mendakwa murid kidal lebih lemah dalam matematik. Tiada rujukan atau institusi dinyatakan.', a:1, w:'Tiada kelayakan dalam bidang dan tiada rujukan. Dakwaan belum boleh digunakan sehingga sumber asalnya ditemui.'},
+    {t:'Artikel dalam jurnal yang tersenarai dalam Scopus, melalui semakan rakan sebaya, ditulis pensyarah fakulti pendidikan tentang strategi bacaan awal.', a:0, w:'Penulis dalam bidang, jurnal berindeks dan berwasit. Sumber ini sah untuk dirujuk; isinya masih perlu dibaca secara kritis.'},
+    {t:'Mesej Telegram meminta anda mengisi borang tuntutan elaun di https://moe-gov-my.elaunguru.info/borang', a:2, w:'Domain sebenar ialah elaunguru.info. Bahagian "moe-gov-my" hanya subdomain yang menyamar. Laman rasmi sektor awam berakhir dengan .gov.my.'},
+    {t:'Klip video tular menunjukkan seorang tokoh mengumumkan cuti sekolah tambahan. Gerak bibir tidak selari dengan audio dan tiada kenyataan di laman rasmi.', a:1, w:'Ada tanda media sintetik dan tiada pengesahan rasmi. Jangan kongsi sehingga kementerian atau agensi berita rasmi mengesahkannya.'}]},
+  quiz:[
+   {q:'Satu infografik tular memetik "Dr. Aina, Pakar Pendidikan" yang mendakwa kaedah hafalan merosakkan otak kanak-kanak. Tiada institusi atau rujukan dinyatakan. Apakah langkah pertama yang paling wajar?',
+    o:['Kongsikan dengan nota "belum disahkan" supaya rakan boleh membantu menyemak.','Cari nama, afiliasi dan penerbitan Dr. Aina di luar infografik itu sebelum menilai dakwaannya.','Terima dakwaan kerana gelaran "Dr." menunjukkan latar akademik.','Nilai dakwaan berdasarkan bilangan perkongsian infografik tersebut.'], key:1,
+    w:'Bacaan lateral menyemak autoriti sumber dahulu. Gelaran dan populariti bukan bukti kepakaran.'},
+   {q:'Antara berikut, bukti manakah paling kukuh untuk menyokong keputusan melaksanakan program intervensi membaca di sekolah?',
+    o:['Testimoni 10 ibu bapa di laman Facebook syarikat program itu.','Video guru yang menunjukkan peningkatan seorang murid.','Meta-analisis dalam jurnal berwasit yang menggabungkan 25 kajian berkawalan.','Artikel blog pendidikan yang paling banyak dibaca tahun ini.'], key:2,
+    w:'Meta-analisis kajian berkawalan berada di puncak piramid bukti. Testimoni dan kes tunggal ialah anekdot.'},
+   {q:'Anda menerima e-mel "Kemas kini Data Guru" dengan pautan https://moe.gov.my.kemaskini-data.com/guru. Apakah domain sebenar laman ini?',
+    o:['moe.gov.my','gov.my','kemaskini-data.com','guru'], key:2,
+    w:'Domain sebenar ialah bahagian terakhir sebelum garis condong pertama. "moe.gov.my" di sini hanya subdomain yang menyamar.'},
+   {q:'Sebuah jurnal dalam talian menerima artikel anda dalam 3 hari tanpa komen penilai, meminta bayaran segera, dan tidak tersenarai dalam mana-mana indeks. Apakah kesimpulan paling tepat?',
+    o:['Jurnal itu cekap dan sesuai untuk penerbitan pantas.','Jurnal itu menunjukkan ciri jurnal pemangsa; kesahan artikelnya perlu diragui.','Jurnal itu sah selagi mempunyai nombor ISSN.','Bayaran membuktikan jurnal itu profesional.'], key:1,
+    w:'Tiada semakan rakan sebaya, kelajuan luar biasa dan bayaran tanpa indeks ialah tanda jurnal pemangsa. ISSN sahaja tidak menjamin kualiti.'},
+   {q:'Satu gambar banjir di sekolah tular dengan kapsyen "Berlaku pagi tadi". Apakah cara paling berkesan mengesahkan gambar ini?',
+    o:['Membesarkan gambar untuk melihat kejelasan piksel.','Melakukan carian imej songsang untuk melihat bila dan di mana gambar itu mula-mula diterbitkan.','Bertanya dalam kumpulan WhatsApp sekolah sama ada sesiapa pernah melihatnya.','Menyemak bilangan komen yang mengesahkan kejadian.'], key:1,
+    w:'Carian imej songsang mendedahkan asal dan tarikh terbitan pertama, lalu mengesan gambar lama yang dikitar semula.'}]
+ },
+ ketepatan: {
+  n:2, name:'Ketepatan', q:'Adakah fakta, angka dan konteksnya betul?', file:'unit2-ketepatan',
+  intro:'Unit ini melatih anda menyemak isi maklumat: menjejak sumber primer, memastikan maklumat masih terkini, membaca data dan graf dengan betul, dan mengesahkan output AI generatif.',
+  objs:['Menjejak statistik ke sumber asal.','Menilai kesesuaian konteks dan masa.','Mengesan herotan data, terjemahan dan visualisasi.','Mengesahkan fakta dan sitasi janaan AI.'],
+  hook:{s:'Sebuah portal berita melaporkan "78% pelajar sekolah menengah di Malaysia mengalami kemerosotan fokus akademik akibat video pendek melebihi 4 jam sehari". Sumbernya ditulis sebagai "Satu Kajian Universiti Tempatan 2025".',
+        q:'Bolehkah angka ini terus dipetik dalam kertas kerja intervensi sekolah?', o:['Boleh','Tidak pasti','Belum boleh'],
+        r:'Belum boleh. Universiti, saiz sampel dan pautan jurnal tidak dinyatakan, jadi angka itu belum dapat disahkan. Video di bawah menunjukkan cara menjejaknya ke sumber asal.'},
+  script:['Angka yang spesifik kelihatan meyakinkan, tetapi tanpa butiran sumber ia belum boleh dipetik.','Jejak ke sumber primer: tiga portal yang mengulang angka sama ialah satu sumber, bukan tiga bukti.','Konteks dan masa: maklumat yang betul dahulu belum tentu betul sekarang. Rujuk pekeliling rasmi terkini.','Graf: semak di mana paksi-Y bermula. Skala yang dipotong membesarkan jurang kecil.','Korelasi bukan sebab-akibat: bandingkan tajuk dengan apa yang kajian asal benar-benar nyatakan.','Output AI: format yang kemas bukan bukti rujukan itu wujud. Sahkan setiap judul dan DOI.','Ringkasan empat soalan: Dari mana angka ini? Masih terkini? Apa kata data sebenar? Output AI sudah disahkan?'],
+  topics:[
+   ['2.1','Jejak ke sumber primer','Sumber primer berbanding sekunder. Frasa "satu kajian mendapati" tanpa butiran ialah tanda amaran.','Google Scholar, OpenDOSM, portal data KPM'],
+   ['2.2','Ketepatan konteks & masa','Tarikh terbitan, pindaan dasar dan petikan di luar konteks.','Surat pekeliling terkini, Wayback Machine'],
+   ['2.3','Membaca data & graf','Korelasi berbanding sebab-akibat, saiz sampel, peratus berbanding nombor sebenar, paksi-Y terpotong.','Senarai semak 5 Soalan Graf dalam Kit Alat'],
+   ['2.4','Ketepatan output AI','Halusinasi, sitasi rekaan dan fakta lapuk dalam jawapan AI generatif.','doi.org atau Crossref; sahkan sendiri sumber yang AI nyatakan']],
+  act:{name:'Jejak Hingga Ke Akar', d:'Bagi setiap dakwaan, bandingkan dengan apa yang ditemui pada sumber asal dan beri keputusan.', o:['Tepat','Diherot','Tiada sumber'],
+   items:[
+    {t:'Tajuk: "Kajian buktikan tidur 8 jam naikkan markah 30%". Sumber asal melaporkan korelasi sederhana antara tempoh tidur dan markah, tanpa sebarang angka 30%.', a:1, w:'Korelasi ditukar menjadi sebab-akibat dan angka 30% tidak wujud dalam kajian asal.'},
+    {t:'Poster: "90% guru sokong cuti pertengahan penggal dua minggu". Tiada nama tinjauan, tarikh atau saiz sampel.', a:2, w:'Tanpa nama tinjauan, tarikh dan saiz sampel, angka ini tidak dapat dijejak atau disahkan.'},
+    {t:'Artikel memetik jadual daripada laporan tahunan rasmi berserta pautan. Angka dalam artikel sepadan dengan jadual asal dan tahunnya dinyatakan.', a:0, w:'Sumber primer dinyatakan, boleh disemak, dan angka sepadan. Dakwaan ini tepat.'},
+    {t:'AI generatif memberi sitasi lengkap berformat APA dengan nombor DOI. Carian DOI itu di doi.org tidak menemui sebarang padanan.', a:2, w:'Sitasi itu rekaan AI. Format yang kemas bukan bukti rujukan itu wujud.'}]},
+  quiz:[
+   {q:'Sebuah artikel menyatakan "Kadar celik huruf murid meningkat 50%!". Dalam laporan asal, bilangan murid yang mencapai tahap minimum meningkat daripada 2 kepada 3 orang dalam satu kelas. Apakah isu ketepatan utama?',
+    o:['Peratus itu salah dikira.','Peratus itu betul tetapi mengelirukan kerana nilai asal dan saiz sampel yang sangat kecil disembunyikan.','Tiada isu kerana peningkatan tetap berlaku.','Artikel sepatutnya menggunakan graf, bukan peratus.'], key:1,
+    w:'Peningkatan daripada 2 kepada 3 memang 50%, tetapi tanpa nilai asal dan saiz sampel, pembaca mendapat gambaran yang dibesar-besarkan.'},
+   {q:'Satu kajian mendapati murid yang bersarapan mendapat markah lebih tinggi. Sebuah portal menulis "Sarapan Menyebabkan Markah Tinggi". Apakah kesilapan penulisan ini?',
+    o:['Menukar korelasi kepada sebab-akibat tanpa bukti eksperimen.','Tidak menyatakan nama penyelidik.','Menggunakan tajuk yang terlalu pendek.','Tiada kesilapan kerana dapatan kajian dilaporkan.'], key:0,
+    w:'Hubungan statistik tidak membuktikan punca. Faktor lain, contohnya pendapatan keluarga, mungkin mempengaruhi kedua-duanya.'},
+   {q:'Seorang rakan berkongsi tangkap layar "syarat baharu kenaikan pangkat guru" daripada artikel bertarikh 2019. Apakah tindakan paling tepat?',
+    o:['Menerimanya kerana artikel itu daripada portal berita rasmi.','Menyemak pekeliling atau laman rasmi terkini kerana dasar mungkin telah dipinda sejak 2019.','Bertanya pendapat guru kanan.','Menyimpannya sebagai rujukan kerana maklumat dasar jarang berubah.'], key:1,
+    w:'Maklumat yang tepat pada masa lalu mungkin tidak lagi tepat. Dasar mesti disemak pada sumber rasmi terkini.'},
+   {q:'AI generatif memberi satu petikan tentang pendidikan dan menyatakan ia daripada ucapan seorang menteri pada 2023. Apakah cara paling tepat untuk mengesahkannya?',
+    o:['Bertanya AI yang sama sekali lagi sama ada petikan itu betul.','Mencari teks ucapan asal atau liputan berita rasmi pada tarikh tersebut.','Menerimanya kerana ayatnya kedengaran rasmi.','Menggunakan AI lain untuk menghasilkan jawapan yang sama.'], key:1,
+    w:'AI boleh mencipta atau tersalah atribusi petikan. Pengesahan mesti dibuat pada sumber asal, bukan pada AI.'},
+   {q:'Graf garis menunjukkan kehadiran murid "jatuh menjunam" dari Januari ke Februari. Paksi-Y bermula pada 94% dan berakhir pada 96%. Apakah tafsiran paling tepat?',
+    o:['Kehadiran merosot dengan teruk.','Perubahan sebenar kecil, iaitu kurang daripada 2 mata peratus; skala paksi-Y yang sempit membesarkan kesan visual.','Graf itu salah kerana sepatutnya menggunakan carta pai.','Data dalam graf itu pasti direka.'], key:1,
+    w:'Nilainya mungkin betul, tetapi julat paksi yang sempit mencipta herotan visual.'}]
+ },
+ bias: {
+  n:3, name:'Bias', q:'Ke arah mana maklumat ini cuba memandu saya?', file:'unit3-bias',
+  intro:'Unit ini melatih anda mengenal pasti kecondongan dalam maklumat dan dalam diri sendiri. Maklumat yang sah dan tepat masih boleh disampaikan secara berat sebelah.',
+  objs:['Menerangkan cara algoritma membentuk suapan.','Mengesan data terpilih dan maklumat yang disembunyikan.','Menilai konflik kepentingan.','Mengenal pasti bahasa berbingkai.','Mengawal bias pengesahan kendiri.'],
+  hook:{s:'Dua portal melaporkan cadangan yang sama. Portal X: "Langkah Proaktif Sekolah Korbankan Masa Demi Kecemerlangan Murid". Portal Y: "Rejim Sekolah Tindas Waktu Rehat & Kesihatan Mental Anak-Anak".',
+        q:'Portal manakah yang melaporkan secara neutral?', o:['Portal X','Portal Y','Tiada'],
+        r:'Tiada. Kedua-duanya memilih perkataan beremosi untuk memandu tafsiran pembaca sebelum fakta dinilai. Faktanya hanya satu: sekolah mencadangkan lanjutan waktu kelas tambahan.'},
+  script:['Maklumat yang sah dan tepat masih boleh disampaikan berat sebelah.','Algoritma menyuap apa yang anda suka. Suapan anda bukan pandangan semua guru.','Pemilihan data: tiga contoh yang benar bukan gambaran penuh. Tanya apa yang tidak ditunjukkan.','Tajaan: tanya siapa membiayai dan siapa mendapat untung, kemudian banding dengan kajian bebas.','Pembingkaian: perkataan beremosi memandu tafsiran. Tulis semula tajuk secara neutral.','Bias pengesahan kendiri: laporkan juga bukti yang menentang pandangan anda.','Ringkasan lima soalan bias untuk menguji sebarang maklumat.'],
+  topics:[
+   ['3.1','Bias algoritma & gelembung tapisan','Suapan diperibadikan mengikut sejarah interaksi. Apa yang sohor kini bukan pandangan majoriti.','Audit suapan sendiri; cari sumber dengan pandangan berbeza'],
+   ['3.2','Bias pemilihan data','Cherry-picking, maklumat yang ditinggalkan dan sampel terpencil.','Tanya: apa yang tidak ditunjukkan?'],
+   ['3.3','Konflik kepentingan & tajaan','Siapa yang membiayai dan siapa yang mendapat untung daripada kesimpulan itu.','Baca bahagian pembiayaan dan penafian; banding dengan kajian bebas'],
+   ['3.4','Pembingkaian & bahasa beremosi','Diksi beremosi, tajuk sensasi dan pelabelan.','Tulis semula tajuk secara neutral'],
+   ['3.5','Bias pengesahan kendiri','Kecenderungan memilih bukti yang menyokong pandangan sendiri.','Cari sekurang-kurangnya satu bukti menentang sebelum membuat kesimpulan']],
+  act:{name:'Dua Tajuk, Satu Fakta', d:'Kenal pasti jenis bias yang paling ketara dalam setiap situasi, kemudian tulis semula satu tajuk secara neutral.', o:['Algoritma','Pemilihan data','Tajaan','Pembingkaian','Pengesahan kendiri'],
+   items:[
+    {t:'Tajuk berita: "Guru Murka! Dasar Baharu Dikecam Hebat".', a:3, w:'Perkataan "murka" dan "dikecam hebat" memandu emosi pembaca sebelum fakta dasar itu diterangkan.'},
+    {t:'Laporan keberkesanan sebuah aplikasi pembelajaran diterbitkan dan dibiayai sepenuhnya oleh syarikat pemilik aplikasi itu.', a:2, w:'Penerbit mendapat untung daripada kesimpulan positif. Dapatan perlu dibandingkan dengan kajian bebas.'},
+    {t:'Brosur program memaparkan 5 murid yang cemerlang tetapi tidak menyebut 120 murid lain yang tidak menunjukkan perubahan.', a:1, w:'Kes yang menyokong ditonjolkan manakala dapatan majoriti disembunyikan.'},
+    {t:'Untuk kertas cadangan, anda menaip "bukti kerja rumah tidak berguna" di enjin carian dan memetik lima hasil teratas.', a:4, w:'Kata kunci carian itu sendiri hanya menemukan bukti yang anda sudah setuju.'}],
+   write:{l:'Tulis semula tajuk pertama di atas secara neutral', k:'neutral'}},
+  quiz:[
+   {q:'Selepas menonton beberapa video tentang kelemahan sistem peperiksaan, suapan TikTok Cikgu Lina dipenuhi kandungan serupa. Apakah tindakan paling wajar sebelum beliau membuat kesimpulan tentang pandangan umum guru?',
+    o:['Mengira jumlah tontonan video-video tersebut sebagai ukuran sokongan.','Menyimpulkan bahawa majoriti guru sependapat kerana kandungan itu terus muncul.','Merujuk tinjauan bebas yang bersampel besar dan sumber dengan pelbagai perspektif.','Berhenti menggunakan media sosial sepenuhnya.'], key:2,
+    w:'Suapan dibentuk oleh sejarah interaksi pengguna, bukan pandangan populasi. Data tinjauan bebas memberi gambaran sebenar.'},
+   {q:'Satu laporan memaparkan 4 testimoni guru yang berjaya menggunakan sebuah aplikasi, tetapi tidak menyebut bahawa 60 guru lain dalam program yang sama berhenti menggunakannya. Apakah jenis bias ini?',
+    o:['Bias pemilihan data (cherry-picking).','Bias pembingkaian bahasa.','Bias algoritma.','Tiada bias kerana testimoni itu benar.'], key:0,
+    w:'Memaparkan kes yang menyokong sambil menyembunyikan dapatan majoriti yang bertentangan ialah cherry-picking.'},
+   {q:'Satu kajian yang mendapati minuman tenaga "meningkatkan fokus belajar" dibiayai oleh pengeluar minuman tersebut. Apakah sikap paling kritis?',
+    o:['Menolak kajian itu serta-merta tanpa membacanya.','Menerimanya kerana diterbitkan oleh syarikat yang terkenal.','Mengabaikan sumber pembiayaan kerana ia tidak berkaitan dengan dapatan.','Mengambil kira konflik kepentingan dan membandingkan dapatan dengan kajian bebas.'], key:3,
+    w:'Tajaan tidak secara automatik membatalkan kajian, tetapi menuntut semakan tambahan terhadap kajian bebas.'},
+   {q:'Antara tajuk berikut, yang manakah paling neutral?',
+    o:['"Dasar Baharu Hancurkan Masa Depan Murid Luar Bandar"','"KPM Umum Perubahan Jadual Peperiksaan Mulai 2027"','"Langkah Berani KPM Selamatkan Generasi Muda"','"Guru Murka, Dasar Peperiksaan Dikecam Hebat"'], key:1,
+    w:'Tajuk ini menyatakan siapa, apa dan bila tanpa diksi beremosi yang memandu tafsiran pembaca.'},
+   {q:'Semasa menulis kertas cadangan, anda hanya mencari kata kunci "kebaikan kelas tanpa kerusi" dalam enjin carian. Apakah risiko utama pendekatan ini?',
+    o:['Hasil carian terlalu banyak untuk dibaca.','Kata kunci itu sendiri memandu kepada bukti sehala dan mencerminkan bias pengesahan kendiri.','Enjin carian tidak menyokong istilah Bahasa Melayu.','Tiada risiko kerana cadangan memang bertujuan menyokong idea.'], key:1,
+    w:'Istilah carian yang condong hanya menemukan bukti yang menyokong. Carian seimbang perlu merangkumi kelemahan dan kesan juga.'}]
+ }
+};
+
+const KIT = [
+ {dim:'kesahan', t:'Kad SIFT', s:'Empat langkah sebelum berkongsi', l:['<b>Berhenti.</b> Jangan terus kongsi atau percaya.','<b>Siasat sumber.</b> Siapa penulis atau penerbitnya, dan adakah mereka layak dalam bidang ini?','<b>Cari liputan lain.</b> Apa kata sumber yang dipercayai tentang dakwaan ini?','<b>Jejak ke asal.</b> Dari mana dakwaan, petikan atau gambar ini bermula?']},
+ {dim:'ketepatan', t:'5 Soalan Graf', s:'Sebelum mempercayai sebarang graf', l:['Di mana paksi-Y bermula dan berakhir?','Apakah unit dan skala setiap paksi?','Berapakah saiz sampel di sebalik setiap angka?','Siapa sumber data dan bila ia dikumpul?','Apakah yang tidak ditunjukkan dalam graf ini?']},
+ {dim:'bias', t:'5 Soalan Bias', s:'Untuk menguji sebarang maklumat', l:['Adakah suapan saya sehala?','Apa yang tidak ditunjukkan?','Siapa yang membiayai, dan siapa mendapat untung?','Perkataan mana yang beremosi?','Adakah saya hanya mencari yang saya setuju?']}
+];
+const TOOLS = [
+ ['sebenarnya.my','https://sebenarnya.my','Portal semakan fakta untuk berita tular di Malaysia'],
+ ['Google Lens','https://lens.google.com','Carian imej songsang untuk mengesan asal gambar'],
+ ['TinEye','https://tineye.com','Carian imej songsang mengikut tarikh terbitan terawal'],
+ ['doi.org','https://doi.org','Sahkan sama ada nombor DOI benar-benar wujud'],
+ ['Google Scholar','https://scholar.google.com','Cari kajian asal dan profil penyelidik'],
+ ['Think. Check. Submit.','https://thinkchecksubmit.org','Senarai semak untuk mengenal pasti jurnal yang boleh dipercayai'],
+ ['Wayback Machine','https://web.archive.org','Lihat versi lama sesuatu laman web'],
+ ['OpenDOSM','https://open.dosm.gov.my','Data rasmi Jabatan Perangkaan Malaysia']
+];
+
+// Narasi Bahasa Malaysia mengikut masa video: t = saat, x = ayat yang dibaca
+const CUES = {"kesahan": [{t: 0.7, x: "Unit 1. Kesahan. Siapa yang berkata, dan adakah mereka layak?"}, {t: 6.9, x: "Hantaran seperti ini mudah tular dalam kumpulan guru."}, {t: 11.3, x: "Sebelum menilai isinya, nilai dahulu sumbernya."}, {t: 18.9, x: "Jangan nilai sumber dari dalam laman itu sendiri."}, {t: 24.1, x: "Buka tab baharu dan semak apa kata pihak lain tentangnya."}, {t: 31, x: "Tanya: adakah kelayakan penulis dalam bidang yang dibincangkan?"}, {t: 37.1, x: "Semak profil di laman universiti, Google Scholar atau ORCID."}, {t: 44, x: "Lima murid mendapat A bukan bukti untuk seluruh negara."}, {t: 50.9, x: "Jurnal pemangsa menerbitkan apa sahaja asalkan dibayar."}, {t: 59, x: "Domain sebenar ialah bahagian terakhir sebelum garis condong pertama."}, {t: 66.1, x: "Sijil HTTPS dan logo rasmi boleh ditiru oleh sesiapa sahaja."}, {t: 74, x: "Wajah dan suara dalam video kini boleh dijana oleh AI."}, {t: 79.3, x: "Sahkan dengan sumber rasmi sebelum percaya atau berkongsi."}, {t: 86.5, x: "Ringkasan. Kad SIFT: empat langkah sebelum berkongsi."}, {t: 91.6, x: "Empat langkah, kurang seminit, sebelum menekan butang kongsi."}, {t: 98.5, x: "Seterusnya, aktiviti amali: Detektif Sumber."}], "ketepatan": [{t: 0.7, x: "Unit 2. Ketepatan. Adakah fakta, angka dan konteksnya betul?"}, {t: 6.9, x: "Angka yang spesifik kelihatan sangat meyakinkan."}, {t: 11.1, x: "Tanpa butiran sumber, angka ini belum boleh dipetik."}, {t: 20, x: "Ikut jejak angka itu sehingga ke laporan asal."}, {t: 26.9, x: "Bilangan laman yang mengulang tidak menjadikan angka itu tepat."}, {t: 34, x: "Maklumat yang betul dahulu belum tentu betul sekarang."}, {t: 40.3, x: "Semak tarikh, kemudian sahkan dengan sumber rasmi terkini."}, {t: 47, x: "Angkanya betul, tetapi skala yang dipotong membesarkan jurang."}, {t: 52.5, x: "Data yang sama. Sentiasa semak di mana paksi-Y bermula."}, {t: 62, x: "Ringkasan dan terjemahan sering mengubah maksud dapatan asal."}, {t: 68.5, x: "Bandingkan tajuk dengan apa yang kajian asal benar-benar nyatakan."}, {t: 75, x: "AI boleh menghasilkan sitasi rekaan yang kelihatan tulen."}, {t: 82.1, x: "Sahkan setiap judul dan DOI di indeks jurnal sebelum digunakan."}, {t: 88.5, x: "Ringkasan. Empat soalan ketepatan."}, {t: 93.6, x: "Tanya empat soalan ini sebelum memetik sebarang fakta atau angka."}, {t: 100.5, x: "Seterusnya, aktiviti amali: Jejak Hingga Ke Akar."}], "bias": [{t: 0.7, x: "Unit 3. Bias. Ke arah mana maklumat ini cuba memandu saya?"}, {t: 6.9, x: "Dua tajuk. Dua perasaan yang sangat berbeza."}, {t: 12.5, x: "Maklumat yang sah dan tepat masih boleh disampaikan berat sebelah."}, {t: 21, x: "Algoritma menyuap apa yang anda suka, bukan apa yang seimbang."}, {t: 28.3, x: "Cari tinjauan bebas dan sumber dengan pandangan berbeza."}, {t: 35, x: "Tiga contoh itu benar, tetapi ia bukan gambaran penuh."}, {t: 39.9, x: "Tanya selalu: apa yang tidak ditunjukkan kepada saya?"}, {t: 49, x: "Tanya: siapa yang membiayai, dan siapa yang mendapat untung?"}, {t: 55.5, x: "Tajaan tidak membatalkan kajian, tetapi menuntut semakan tambahan."}, {t: 63, x: "Perkataan beremosi memandu tafsiran sebelum fakta dinilai."}, {t: 70.3, x: "Latihan terbaik: tulis semula tajuk itu secara neutral."}, {t: 77, x: "Kita cenderung membuang bukti yang bercanggah dengan hipotesis."}, {t: 83.9, x: "Laporkan juga bukti yang menentang pandangan anda."}, {t: 90.5, x: "Ringkasan. Lima soalan bias."}, {t: 96, x: "Maklumat yang baik tahan diuji dengan kelima-lima soalan ini."}, {t: 103.5, x: "Seterusnya, aktiviti amali: Dua Tajuk, Satu Fakta."}]};
+
+/* ================= KEADAAN ================= */
+const KEY = 'celikfakta-pdp-v1';
+const fresh = () => ({ unit:{kesahan:{ans:[],checked:false,best:null}, ketepatan:{ans:[],checked:false,best:null}, bias:{ans:[],checked:false,best:null}}, act:{kesahan:[],ketepatan:[],bias:[]}, hook:{}, text:{}, nama:'', suara:true, pid:'', queue:[] });
+let S = fresh();
+try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(fresh(), JSON.parse(r)); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const PASS = 3; // jawapan betul minimum (daripada 5) untuk dikira menguasai
+const passed = d => S.unit[d].best !== null && S.unit[d].best >= PASS;
+const allPassed = () => ORDER.every(passed);
+const LET = 'ABCD';
+
+/* ================= PAPARAN ================= */
+function nextStep() {
+  const d = ORDER.find(x => !passed(x)), started = ORDER.some(x => S.unit[x].best !== null);
+  return d ? {hash:'unit-' + d, label:(started ? 'Teruskan ke' : 'Mula') + ' Unit ' + U[d].n + ': ' + U[d].name} : {hash:'keputusan', label:'Lihat keputusan dan sijil'};
+}
+function unitPill(d) {
+  if (passed(d)) return '<span class="pill good">Menguasai ' + S.unit[d].best + '/5</span>';
+  if (S.unit[d].best !== null) return '<span class="pill warn">Cuba semula ' + S.unit[d].best + '/5</span>';
+  return '<span class="pill">Belum mula</span>';
+}
+
+function vHome() {
+  const n = nextStep();
+  return `
+  <section class="hero">
+    <h1>Semak dahulu, <mark>baru kongsi.</mark></h1>
+    <p class="lead">CelikFakta PdP bertujuan untuk memperkasakan guru sekolah dengan kemahiran menilai maklumat kesahan (validity), ketepatan (accuracy) dan bias dalam maklumat digital melalui pemeriksaan, perbandingan dan analisis kritis pelbagai sumber bagi memastikan maklumat yang digunakan dalam pengajaran dan pembelajaran (PdP) adalah sahih, tepat dan sesuai.</p>
+    <div class="actions"><a class="btn" href="#${n.hash}">${n.label}</a><a class="btn ghost" href="#kit-alat">Lihat Kit Alat</a></div>
+  </section>
+  <section>
+    <h2>Laluan anda</h2>
+    <ol class="path">
+      ${ORDER.map((d, i) => `<li style="--dim:var(--${d})"><a href="#unit-${d}"><span class="num">${i + 1}</span><span><b>Unit ${U[d].n}: ${U[d].name}</b><small>Video, aktiviti amali dan 5 soalan penilaian · 65 minit</small></span>${unitPill(d)}</a></li>`).join('')}
+      <li><a href="#keputusan"><span class="num">4</span><span><b>Keputusan &amp; sijil</b><small>Skor setiap dimensi, lencana, refleksi, sijil</small></span>${allPassed() ? '<span class="pill good">Sedia</span>' : '<span class="pill">Belum lengkap</span>'}</a></li>
+    </ol>
+  </section>
+  <section>
+    <h2>Tiga dimensi</h2>
+    <div class="dims">
+      ${ORDER.map(d => `<div class="card" style="--dim:var(--${d})"><p class="eyebrow">Unit ${U[d].n}</p><h3>${U[d].name}</h3><p>${U[d].q}</p><ul>${U[d].topics.map(t => `<li>${t[1]}</li>`).join('')}</ul></div>`).join('')}
+    </div>
+  </section>
+  <section>
+    <h2>Selepas modul ini, anda dapat</h2>
+    <ol class="outcomes">
+      <li>Meningkatkan kemahiran menilai kesahan maklumat digital</li>
+      <li>Meningkatkan kemahiran menilai ketepatan maklumat</li>
+      <li>Meningkatkan kemahiran menilai unsur bias dalam maklumat digital</li>
+    </ol>
+  </section>`;
+}
+
+function sec(n, title, time, body) {
+  return `<section><div class="sec-head"><span class="n">${n}</span><h2>${title}</h2><span class="t">${time}</span></div><div class="stack">${body}</div></section>`;
+}
+function hHook(d) {
+  const h = U[d].hook, pick = S.hook[d];
+  return `<p class="scen">${esc(h.s)}</p><p class="q">${esc(h.q)}</p>
+    <div class="chips">${h.o.map((o, k) => `<button type="button" class="chip ${pick === k ? 'right' : ''}" style="${pick === k ? 'border-color:var(--dim);background:var(--tint);color:var(--ink)' : ''}" data-act="hook" data-k="${k}">${o}</button>`).join('')}</div>
+    ${pick !== undefined ? `<div class="why warn"><b>Penjelasan.</b>${esc(h.r)}</div>` : ''}`;
+}
+function hAct(d) {
+  const a = U[d].act, st = S.act[d] || [];
+  return `<p>${esc(a.d)}</p><div class="card stack" style="gap:16px">
+    ${a.items.map((it, i) => { const p = st[i], done = p !== undefined && p !== null;
+      return `<div class="item"><p><b style="font-family:var(--font-display)">${i + 1}.</b> ${esc(it.t)}</p>
+      <div class="chips">${a.o.map((o, k) => `<button type="button" class="chip ${done && k === it.a ? 'right' : ''} ${done && p === k && k !== it.a ? 'wrong' : ''}" data-act="act" data-i="${i}" data-k="${k}" ${done ? 'disabled' : ''}>${o}</button>`).join('')}</div>
+      ${done ? `<div class="why ${p === it.a ? 'good' : 'bad'}"><b>${p === it.a ? 'Betul.' : 'Jawapan: ' + a.o[it.a] + '.'}</b> ${esc(it.w)}</div>` : ''}</div>`; }).join('')}
+    </div>
+    ${a.write ? `<div><label for="txt-${a.write.k}">${a.write.l}</label><textarea id="txt-${a.write.k}" data-text="${a.write.k}" placeholder="Contoh: nyatakan siapa, apa dan bila tanpa perkataan beremosi">${esc(S.text[a.write.k] || '')}</textarea></div>` : ''}
+    ${st.filter(x => x !== undefined && x !== null).length === a.items.length ? `<div><button type="button" class="btn ghost small" data-act="act-reset">Cuba aktiviti semula</button></div>` : ''}`;
+}
+function hQuiz(d) {
+  const u = U[d], st = S.unit[d], n = u.quiz.length;
+  const answered = u.quiz.every((_, i) => st.ans[i] !== undefined && st.ans[i] !== null);
+  const score = u.quiz.reduce((s, q, i) => s + (st.ans[i] === q.key ? 1 : 0), 0);
+  let out = `<p>Jawab kelima-lima soalan, kemudian semak. Anda dikira menguasai unit ini dengan sekurang-kurangnya ${PASS} daripada 5 jawapan betul.</p>`;
+  out += u.quiz.map((q, i) => { const a = st.ans[i];
+    return `<div class="card stack"><p class="q">${i + 1}. ${esc(q.q)}</p>
+    <div class="opts">${q.o.map((o, k) => { let c = ''; if (st.checked) { if (k === q.key) c = 'right'; else if (a === k) c = 'wrong'; } else if (a === k) c = 'sel';
+      return `<button type="button" class="opt ${c}" data-act="quiz-pick" data-i="${i}" data-k="${k}" ${st.checked ? 'disabled' : ''} aria-pressed="${a === k}"><span class="ltr">${LET[k]}</span><span>${esc(o)}</span></button>`; }).join('')}</div>
+    ${st.checked ? `<div class="why ${a === q.key ? 'good' : 'bad'}"><b>${a === q.key ? 'Betul.' : 'Jawapan: ' + LET[q.key] + '.'}</b> ${esc(q.w)}</div>` : ''}</div>`; }).join('');
+  if (!st.checked) out += `<div><button type="button" class="btn" data-act="quiz-check" ${answered ? '' : 'disabled'}>Semak jawapan</button>${answered ? '' : ' <span class="muted" style="margin-left:10px">Jawab semua soalan dahulu.</span>'}</div>`;
+  else {
+    const ok = score >= PASS;
+    out += `<div class="card stack" style="border-color:var(--${ok ? 'good' : 'bad'})"><h3>${ok ? 'Menguasai' : 'Belum menguasai'}: ${score} daripada ${n}</h3>
+      <p>${ok ? 'Anda memperoleh Lencana ' + u.name + '.' : 'Semak semula penjelasan di atas dan topik yang berkaitan, kemudian cuba lagi.'}</p>
+      <div class="actions"><button type="button" class="btn ghost" data-act="quiz-redo">Cuba semula</button>${ok ? `<a class="btn" href="#${nextStep().hash}">${nextStep().label}</a>` : ''}</div></div>`;
+  }
+  return out;
+}
+function vUnit(d) {
+  const u = U[d];
+  const i = ORDER.indexOf(d);
+  const prev = i === 0 ? ['utama', 'Utama'] : ['unit-' + ORDER[i - 1], 'Unit ' + U[ORDER[i - 1]].n + ': ' + U[ORDER[i - 1]].name];
+  const next = i === 2 ? ['keputusan', 'Keputusan & sijil'] : ['unit-' + ORDER[i + 1], 'Unit ' + U[ORDER[i + 1]].n + ': ' + U[ORDER[i + 1]].name];
+  return `<div style="--dim:var(--${d})">
+    <header class="unit-head">
+      <p class="eyebrow">Unit ${u.n} · 65 minit</p>
+      <h1>${u.name}</h1>
+      <p class="lead">${u.q}</p>
+      <p style="max-width:68ch">${u.intro}</p>
+      <div><b style="font-family:var(--font-display)">Selepas unit ini, anda dapat:</b><ul class="objs">${u.objs.map(o => `<li>${o}</li>`).join('')}</ul></div>
+    </header>
+    ${sec(1, 'Cetusan', '5 minit', `<div id="hook" class="stack">${hHook(d)}</div>`)}
+    ${sec(2, 'Konsep teras: video', '15 minit', `
+      <div class="video-box"><video controls playsinline preload="metadata" poster="media/${u.file}.jpg"><source src="media/${u.file}.mp4" type="video/mp4"></video></div>
+      <div class="voice"><button type="button" class="btn ghost small" id="vbtn" data-act="voice"></button><span class="muted" id="vstat" aria-live="polite"></span></div>
+      <p class="muted" style="font-size:.92rem">Kira-kira 2 minit · bernarasi dan berkapsyen penuh. Berhenti pada mana-mana babak untuk mencatat nota.</p>
+      <div class="why bad" id="vfail" hidden><b>Video tidak dapat dimuatkan.</b> Baca isi video di bawah sebagai ganti.</div>
+      <details><summary>Isi video dalam bentuk teks</summary><ol>${u.script.map(s => `<li>${s}</li>`).join('')}</ol></details>`)}
+    ${sec(3, 'Teknik & alat semakan', '15 minit', `<div class="topics">${u.topics.map(t => `<div class="card"><span class="tn">TOPIK ${t[0]}</span><h3>${t[1]}</h3><p>${t[2]}</p><p class="tool"><b>Alat dan teknik</b>${t[3]}</p></div>`).join('')}</div><p><a href="#kit-alat">Buka Kit Alat untuk senarai semak dan pautan</a></p>`)}
+    ${sec(4, 'Aktiviti amali: ' + u.act.name, '20 minit', `<div id="act" class="stack">${hAct(d)}</div>`)}
+    ${sec(5, 'Penilaian unit', '10 minit', `<div id="quiz" class="stack">${hQuiz(d)}</div>`)}
+    <nav class="unit-nav" aria-label="Unit sebelum dan selepas"><a class="btn ghost" href="#${prev[0]}">← ${prev[1]}</a><a class="btn ghost" href="#${next[0]}">${next[1]} →</a></nav>
+  </div>`;
+}
+
+function vKit() {
+  return `<div class="stack" style="gap:10px"><p class="eyebrow">Rujukan pantas</p><h1>Kit Alat CelikFakta</h1>
+    <p class="lead">Tiga senarai semak untuk digunakan semasa menyediakan bahan PdP, serta alat semakan percuma.</p></div>
+    <div class="kit">${KIT.map(k => `<div class="card" style="--dim:var(--${k.dim});border-top:5px solid var(--dim)"><p class="eyebrow">${U[k.dim].name}</p><h3>${k.t}</h3><p class="muted">${k.s}</p><ol>${k.l.map(x => `<li>${x}</li>`).join('')}</ol></div>`).join('')}</div>
+    <section><h2>Alat semakan</h2><ul class="links">${TOOLS.map(t => `<li><a href="${t[1]}" target="_blank" rel="noopener"><span class="ticon"><i>${t[0][0].toUpperCase()}</i><img src="https://www.google.com/s2/favicons?domain=${new URL(t[1]).hostname}&sz=64" alt="" width="40" height="40"></span><span><b>${t[0]}</b><small>${t[2]}</small></span></a></li>`).join('')}</ul></section>`;
+}
+
+function vResult() {
+  const done = allPassed();
+  const today = new Date().toLocaleDateString('ms-MY', {day:'numeric', month:'long', year:'numeric'});
+  return `<div class="stack" style="gap:10px"><p class="eyebrow">Keputusan</p><h1>Pencapaian anda</h1>
+    <p class="lead">Skor terbaik penilaian unit bagi setiap dimensi. Anda dikira menguasai sesuatu dimensi dengan sekurang-kurangnya ${PASS} daripada 5 jawapan betul.</p></div>
+    <section style="margin-top:24px"><div class="card scores">
+      ${ORDER.map(d => { const b = S.unit[d].best;
+        return `<div class="score-row" style="--dim:var(--${d})"><h3>${U[d].name}</h3>
+        <div class="barline" style="grid-template-columns:1fr 34px auto"><div class="track"><i style="width:${(b || 0) * 20}%"></i></div><b>${b === null ? '–' : b + '/5'}</b><span class="pill ${passed(d) ? 'good' : ''}">${passed(d) ? 'Menguasai' : b === null ? 'Belum dijawab' : 'Belum menguasai'}</span></div></div>`; }).join('')}
+    </div></section>
+    <section><h2>Lencana</h2><div class="badges">${ORDER.map(d => `<div class="badge ${passed(d) ? 'on' : ''}" style="--dim:var(--${d})"><span class="disc">${U[d].n}</span><span><b>Lencana ${U[d].name}</b><small class="muted">${passed(d) ? 'Diperoleh' : 'Perlu ' + PASS + '/5 dalam penilaian unit'}</small></span></div>`).join('')}</div></section>
+    <section><h2>Refleksi</h2><div class="stack" style="margin-top:14px">
+      <div><label for="txt-refleksi">Satu tabiat menyemak maklumat yang akan saya ubah mulai minggu ini</label><textarea id="txt-refleksi" data-text="refleksi">${esc(S.text.refleksi || '')}</textarea></div>
+    </div></section>
+    <section><h2>Sijil penyertaan</h2>
+      ${done ? `<div style="margin-top:14px;max-width:420px"><label for="nama">Nama pada sijil</label><input type="text" id="nama" value="${esc(S.nama)}" placeholder="Taip nama penuh anda" autocomplete="name"></div>
+      <div class="cert"><span class="eyebrow">Sijil Penyertaan</span><h2>CelikFakta PdP</h2><small>Dengan ini disahkan bahawa</small><div class="nm" id="certName">${esc(S.nama) || '&nbsp;'}</div>
+        <p style="max-width:46ch">telah melengkapkan modul literasi maklumat digital dan menguasai dimensi Kesahan, Ketepatan dan Bias.</p><small>${today}</small></div>`
+      : `<div class="card stack" style="margin-top:14px"><p>Sijil dibuka apabila ketiga-tiga lencana diperoleh. Baki: ${ORDER.filter(d => !passed(d)).map(d => `<a href="#unit-${d}">Unit ${U[d].n} ${U[d].name}</a>`).join(', ')}.</p></div>`}
+    </section>`;
+}
+
+/* ================= GOOGLE SHEET ================= */
+// SHEET_URL: alamat "Web app" Apps Script yang menulis ke Google Sheet (lihat apps-script/Code.gs). Kosong = data kekal di pelayar sahaja.
+const SHEET_URL = '';
+let sending = false;
+// record: tambah satu baris ke giliran, kemudian cuba hantar. Baris yang gagal dihantar dicuba semula pada lawatan seterusnya.
+function record(jenis, data) {
+  if (!SHEET_URL) return;
+  if (!S.pid) S.pid = 'P-' + Math.random().toString(36).slice(2, 10).toUpperCase();   // ID rawak bagi setiap pelayar
+  S.queue = (S.queue || []).concat([Object.assign({masa:new Date().toISOString(), id:S.pid, nama:S.nama || '', jenis}, data)]).slice(-50);
+  save(); flush();
+}
+async function flush() {
+  if (!SHEET_URL || sending || !(S.queue || []).length) return;
+  sending = true; const n = S.queue.length;
+  try {
+    await fetch(SHEET_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({rows:S.queue.slice(0, n)})});
+    S.queue.splice(0, n); save();
+  } catch (e) {}
+  sending = false;
+}
+
+/* ================= SUARA NARATIF ================= */
+// Voice: membaca ayat narasi. Cuba suara Claude (keupayaan "tts") dahulu; jika tiada, suara Bahasa Melayu pada peranti; jika tiada juga, kapsyen sahaja.
+const Voice = (() => {
+  let tts = null, web = null, mode = null, ready = null;
+  const quiet = f => { try { const r = f(); if (r && r.catch) r.catch(() => {}); } catch (e) {} };
+  function init() {
+    if (ready) return ready;
+    ready = (async () => {
+      try { if (window.claude && window.claude.use) { tts = await window.claude.use('tts'); if (tts) return mode = 'claude'; } } catch (e) {}
+      try {
+        if ('speechSynthesis' in window) {
+          const pick = () => speechSynthesis.getVoices().find(v => /^ms/i.test(v.lang));
+          web = pick();
+          if (!web) { await new Promise(r => { speechSynthesis.addEventListener('voiceschanged', r, {once:true}); setTimeout(r, 1500); }); web = pick(); }
+          if (web) return mode = 'web';
+        }
+      } catch (e) {}
+      return mode = 'none';
+    })();
+    return ready;
+  }
+  return {
+    init, get mode() { return mode; },
+    say(x) {
+      if (mode === 'claude') quiet(() => tts.add([{text:x, language:'ms'}]));   // add() beratur selepas ayat semasa
+      else if (mode === 'web') quiet(() => { const u = new SpeechSynthesisUtterance(x); u.voice = web; u.lang = web.lang; speechSynthesis.speak(u); });
+    },
+    pause()  { if (mode === 'claude') quiet(() => tts.pause());  else if (mode === 'web') quiet(() => speechSynthesis.pause()); },
+    resume() { if (mode === 'claude') quiet(() => tts.resume()); else if (mode === 'web') quiet(() => speechSynthesis.resume()); },
+    stop()   { if (mode === 'claude') quiet(() => tts.stop());   else if (mode === 'web') quiet(() => speechSynthesis.cancel()); }
+  };
+})();
+function voiceLabel() {
+  const b = $('#vbtn'), st = $('#vstat'); if (!b) return;
+  b.textContent = 'Suara naratif: ' + (S.suara ? 'hidup' : 'mati'); b.setAttribute('aria-pressed', S.suara); b.hidden = Voice.mode === 'none';
+  st.textContent = Voice.mode === null ? 'Menyemak sokongan suara…' : Voice.mode === 'none' ? 'Suara tidak disokong pada pelayar ini. Kapsyen penuh ada dalam video.' : 'Narasi Bahasa Malaysia dimainkan seiring dengan video.';
+}
+// wireVoice: apabila video sampai ke masa sesuatu ayat, ayat itu dibaca; berhenti, sambung dan lompat mengikut video.
+function wireVoice(v, d) {
+  const cues = CUES[d]; let idx = 0;
+  const jump = () => { Voice.stop(); idx = cues.findIndex(c => c.t >= v.currentTime - 0.3); if (idx < 0) idx = cues.length; };
+  v.addEventListener('timeupdate', () => { if (v.paused || v.seeking) return; while (idx < cues.length && cues[idx].t <= v.currentTime) { if (S.suara) Voice.say(cues[idx].x); idx++; } });
+  v.addEventListener('seeking', jump);
+  v.addEventListener('pause', () => { if (!v.ended) Voice.pause(); });
+  v.addEventListener('play', () => Voice.resume());
+  voiceLabel();
+}
+
+/* ================= LALUAN & PERISTIWA ================= */
+const ROUTES = {'utama':vHome, 'unit-kesahan':() => vUnit('kesahan'), 'unit-ketepatan':() => vUnit('ketepatan'), 'unit-bias':() => vUnit('bias'), 'kit-alat':vKit, 'keputusan':vResult};
+const route = () => { const h = location.hash.replace('#', ''); return ROUTES[h] ? h : 'utama'; };
+const curUnit = () => route().startsWith('unit-') ? route().slice(5) : null;
+
+function renderNav() {
+  const r = route();
+  const items = [['utama','Utama',''], ...ORDER.map(d => ['unit-' + d, U[d].name, passed(d) ? 'done' : '']),
+    ['kit-alat','Kit Alat',null], ['keputusan','Keputusan', allPassed() ? 'done' : '']];
+  $('#nav').innerHTML = items.map(([h, t, s]) => `<a href="#${h}" ${h === r ? 'aria-current="page"' : ''}>${s === null || h === 'utama' ? '' : `<span class="st ${s}"></span>`}${t}</a>`).join('');
+}
+function render(keepScroll) {
+  $('#app').innerHTML = ROUTES[route()]();
+  renderNav();
+  const src = $('video source');
+  if (src) src.addEventListener('error', () => { $('#vfail').hidden = false; });
+  document.querySelectorAll('.ticon img').forEach(im => { const rm = () => im.remove(); im.addEventListener('error', rm); if (im.complete && !im.naturalWidth) rm(); });
+  Voice.stop();
+  if ($('video')) wireVoice($('video'), curUnit());
+  if (!keepScroll) window.scrollTo(0, 0);
+}
+function part(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; renderNav(); }
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const act = b.dataset.act, k = +b.dataset.k, i = +b.dataset.i, d = curUnit();
+  if (act === 'voice') { S.suara = !S.suara; save(); if (!S.suara) Voice.stop(); voiceLabel(); }
+  else if (act === 'hook') { S.hook[d] = k; save(); part('hook', hHook(d)); }
+  else if (act === 'act') { S.act[d][i] = k; save(); part('act', hAct(d)); }
+  else if (act === 'act-reset') { S.act[d] = []; save(); part('act', hAct(d)); }
+  else if (act === 'quiz-pick') { S.unit[d].ans[i] = k; save(); part('quiz', hQuiz(d)); }
+  else if (act === 'quiz-check') { const st = S.unit[d]; st.checked = true; const sc = U[d].quiz.reduce((s, q, j) => s + (st.ans[j] === q.key ? 1 : 0), 0); st.best = Math.max(st.best === null ? 0 : st.best, sc); save(); record('penilaian', {unit:U[d].name, skor:sc, menguasai:sc >= PASS ? 'Ya' : 'Tidak', jawapan:U[d].quiz.map((_, j) => LET[st.ans[j]]).join('')}); part('quiz', hQuiz(d)); }
+  else if (act === 'quiz-redo') { S.unit[d].ans = []; S.unit[d].checked = false; save(); part('quiz', hQuiz(d)); document.getElementById('quiz').scrollIntoView({block:'start'}); }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.text) { S.text[t.dataset.text] = t.value; save(); }
+  if (t.id === 'nama') { S.nama = t.value; save(); $('#certName').textContent = t.value || ' '; }
+});
+let armed = false;
+document.addEventListener('change', e => {   // hantar teks apabila peserta selesai menaip
+  const t = e.target;
+  if (t.dataset.text && t.value.trim()) record(t.dataset.text === 'refleksi' ? 'refleksi' : 'tajuk neutral', {teks:t.value.trim()});
+  if (t.id === 'nama' && t.value.trim()) record('sijil', {});
+});
+$('#resetBtn').addEventListener('click', e => {
+  if (!armed) { armed = true; e.target.textContent = 'Pasti? Klik sekali lagi untuk padam semua kemajuan'; setTimeout(() => { armed = false; e.target.textContent = 'Set semula kemajuan'; }, 4000); return; }
+  armed = false; S = fresh(); save(); e.target.textContent = 'Set semula kemajuan'; location.hash = 'utama'; render();
+});
+window.addEventListener('hashchange', () => render());
+render();
+Voice.init().then(voiceLabel);
+if (SHEET_URL) { $('#footNote').textContent = 'Kemajuan disimpan pada pelayar ini. Skor penilaian, refleksi dan nama pada sijil dihantar ke Google Sheet penyelaras.'; flush(); }
+</script>
+</body>
+</html>
