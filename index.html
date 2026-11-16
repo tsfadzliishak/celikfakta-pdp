@@ -311,22 +311,54 @@ const U = {
         'Rujukan halaman yang diberikan membuktikan ringkasan itu tepat.',
         'AI melekatkan angka yang betul pada dakwaan yang salah: 9 daripada 10 pernah mencuba AI, tetapi hanya 4 daripada 10 menyokongnya dalam penilaian.'], key:3,
      w:'Ringkasan AI boleh menggabungkan dua dapatan menjadi satu ayat yang kedengaran meyakinkan. Angka dan nombor halaman yang betul bukan jaminan dakwaannya betul. Baca ayat penuh pada sumber asal sebelum memetik.'}]},
+  quizVer:2,
+  quizNote:'Setiap soalan memaparkan dua sumber digital tentang isu pendidikan yang sama. Bandingkan faktanya dan analisis percanggahannya sebelum memilih jawapan. Semua sumber ialah contoh rekaan untuk tujuan penilaian.',
   quiz:[
-   {q:'Sebuah artikel menyatakan "Kadar celik huruf murid meningkat 50%!". Dalam laporan asal, bilangan murid yang mencapai tahap minimum meningkat daripada 2 kepada 3 orang dalam satu kelas. Apakah isu ketepatan utama?',
-    o:['Peratus itu salah dikira.','Peratus itu betul tetapi mengelirukan kerana nilai asal dan saiz sampel yang sangat kecil disembunyikan.','Tiada isu kerana peningkatan tetap berlaku.','Artikel sepatutnya menggunakan graf, bukan peratus.'], key:1,
-    w:'Peningkatan daripada 2 kepada 3 memang 50%, tetapi tanpa nilai asal dan saiz sampel, pembaca mendapat gambaran yang dibesar-besarkan.'},
-   {q:'Satu kajian mendapati murid yang bersarapan mendapat markah lebih tinggi. Sebuah portal menulis "Sarapan Menyebabkan Markah Tinggi". Apakah kesilapan penulisan ini?',
-    o:['Menukar korelasi kepada sebab-akibat tanpa bukti eksperimen.','Tidak menyatakan nama penyelidik.','Menggunakan tajuk yang terlalu pendek.','Tiada kesilapan kerana dapatan kajian dilaporkan.'], key:0,
-    w:'Hubungan statistik tidak membuktikan punca. Faktor lain, contohnya pendapatan keluarga, mungkin mempengaruhi kedua-duanya.'},
-   {q:'Seorang rakan berkongsi tangkap layar "syarat baharu kenaikan pangkat guru" daripada artikel bertarikh 2019. Apakah tindakan paling tepat?',
-    o:['Menerimanya kerana artikel itu daripada portal berita rasmi.','Menyemak pekeliling atau laman rasmi terkini kerana dasar mungkin telah dipinda sejak 2019.','Bertanya pendapat guru kanan.','Menyimpannya sebagai rujukan kerana maklumat dasar jarang berubah.'], key:1,
-    w:'Maklumat yang tepat pada masa lalu mungkin tidak lagi tepat. Dasar mesti disemak pada sumber rasmi terkini.'},
-   {q:'AI generatif memberi satu petikan tentang pendidikan dan menyatakan ia daripada ucapan seorang menteri pada 2023. Apakah cara paling tepat untuk mengesahkannya?',
-    o:['Bertanya AI yang sama sekali lagi sama ada petikan itu betul.','Mencari teks ucapan asal atau liputan berita rasmi pada tarikh tersebut.','Menerimanya kerana ayatnya kedengaran rasmi.','Menggunakan AI lain untuk menghasilkan jawapan yang sama.'], key:1,
-    w:'AI boleh mencipta atau tersalah atribusi petikan. Pengesahan mesti dibuat pada sumber asal, bukan pada AI.'},
-   {q:'Graf garis menunjukkan kehadiran murid "jatuh menjunam" dari Januari ke Februari. Paksi-Y bermula pada 94% dan berakhir pada 96%. Apakah tafsiran paling tepat?',
-    o:['Kehadiran merosot dengan teruk.','Perubahan sebenar kecil, iaitu kurang daripada 2 mata peratus; skala paksi-Y yang sempit membesarkan kesan visual.','Graf itu salah kerana sepatutnya menggunakan carta pai.','Data dalam graf itu pasti direka.'], key:1,
-    w:'Nilainya mungkin betul, tetapi julat paksi yang sempit mencipta herotan visual.'}]
+   {isu:'Keberkesanan program celik huruf di sebuah sekolah',
+    a:['Artikel buletin pendidikan', '"Kadar celik huruf murid meningkat 50% selepas program ini dilaksanakan!"'],
+    b:['Laporan program sekolah (sumber asal)', '"Bilangan murid Tahun 1 yang mencapai tahap minimum meningkat daripada 2 orang kepada 3 orang, daripada 28 murid dalam kelas."'],
+    q:'Apakah kesimpulan paling tepat apabila kedua-dua sumber ini dibandingkan?',
+    o:['Sumber A salah mengira peratus peningkatan.',
+       'Peratus dalam Sumber A betul, tetapi mengelirukan kerana nilai asal dan saiz kumpulan yang kecil tidak dinyatakan.',
+       'Kedua-dua sumber bercanggah, jadi salah satu daripadanya pasti palsu.',
+       'Sumber A lebih tepat kerana peratus lebih mudah difahami daripada bilangan murid.'], key:1,
+    w:'Peningkatan daripada 2 kepada 3 orang memang 50%, jadi kedua-dua sumber tidak bercanggah. Namun tanpa nilai asal dan saiz kelas, pembaca Sumber A mendapat gambaran yang dibesar-besarkan.'},
+   {isu:'Sokongan guru terhadap buku teks digital',
+    a:['Tinjauan di laman media sosial sebuah kumpulan guru', '"92% guru menyokong buku teks digital." 310 responden menjawab secara sukarela melalui pautan yang dikongsi dalam kumpulan itu.'],
+    b:['Tinjauan sebuah institut penyelidikan', '"54% guru menyokong buku teks digital." 2,400 guru dipilih secara rawak dari semua negeri.'],
+    q:'Sumber manakah lebih wajar digunakan untuk menggambarkan pandangan guru secara umum, dan mengapa?',
+    o:['Sumber A, kerana peratusnya lebih tinggi dan lebih meyakinkan.',
+       'Kedua-duanya sama wajar kerana kedua-duanya meninjau guru.',
+       'Sumber B, kerana respondennya dipilih secara rawak dan lebih ramai, manakala responden Sumber A memilih sendiri untuk menjawab dalam satu kumpulan.',
+       'Tiada satu pun, kerana angka tinjauan sentiasa berbeza.'], key:2,
+    w:'Perbezaan 92% dan 54% berpunca daripada cara responden dipilih. Responden sukarela dalam satu kumpulan cenderung berkongsi pandangan yang sama, jadi Sumber A tidak mewakili semua guru. Sampel rawak yang lebih besar dalam Sumber B lebih wajar.'},
+   {isu:'Kenyataan seorang pengetua tentang kerja rumah',
+    a:['Tangkap layar yang tular di WhatsApp', '"Pengetua: Kerja rumah tidak perlu diberikan."'],
+    b:['Teks penuh ucapan pengetua di laman rasmi sekolah', '"Kerja rumah tidak perlu diberikan pada minggu peperiksaan supaya murid dapat mengulang kaji. Pada minggu lain, kerja rumah diteruskan seperti biasa."'],
+    q:'Apakah isu ketepatan pada Sumber A?',
+    o:['Petikan itu benar tetapi dipotong daripada konteksnya, lalu maksudnya berubah.',
+       'Petikan itu direka sepenuhnya dan tidak pernah diucapkan.',
+       'Tiada isu, kerana perkataan itu memang diucapkan oleh pengetua.',
+       'Sumber B kurang boleh dipercayai kerana teksnya lebih panjang.'], key:0,
+    w:'Perkataan dalam Sumber A memang diucapkan, tetapi syarat "pada minggu peperiksaan" telah dibuang. Petikan yang tepat perkataannya masih boleh mengelirukan apabila konteksnya ditinggalkan. Rujuk teks penuh sebelum berkongsi.'},
+   {isu:'Kehadiran murid dari Januari ke Februari',
+    a:['Infografik di media sosial', 'Graf garis bertajuk "Kehadiran murid jatuh menjunam!". Paksi-Y graf itu bermula pada 94% dan berakhir pada 96%.'],
+    b:['Jadual data kehadiran sekolah', 'Januari: 95.8%. Februari: 94.6%.'],
+    q:'Apakah tafsiran paling tepat apabila kedua-dua sumber ini dibandingkan?',
+    o:['Kehadiran merosot dengan teruk, seperti yang ditunjukkan oleh Sumber A.',
+       'Sumber A memalsukan data kerana grafnya tidak sama dengan jadual.',
+       'Graf dan jadual tidak boleh dibandingkan kerana formatnya berbeza.',
+       'Datanya sepadan: penurunan hanya 1.2 mata peratus. Paksi-Y yang sempit dalam Sumber A membesarkan kesan visualnya.'], key:3,
+    w:'Kedua-dua sumber menggunakan data yang sama. Penurunan daripada 95.8% kepada 94.6% ialah 1.2 mata peratus, tetapi paksi-Y yang hanya meliputi 94% hingga 96% menjadikannya kelihatan seperti kejatuhan besar.'},
+   {isu:'Kajian tentang pembelajaran teradun dan motivasi murid',
+    a:['Jawapan AI generatif', '"Menurut kajian bertajuk Kesan Pembelajaran Teradun terhadap Motivasi Murid (2022), motivasi murid meningkat 40%." Jawapan itu disertakan nama jurnal dan nombor DOI.'],
+    b:['Semakan di indeks jurnal dan doi.org', 'Tiada artikel dengan judul itu ditemui dalam jurnal yang dinamakan. Nombor DOI yang diberikan tidak wujud.'],
+    q:'Apakah tindakan paling tepat?',
+    o:['Jangan petik. Anggap sitasi itu rekaan sehingga artikel asalnya ditemui dan dibaca.',
+       'Petik kajian itu, kerana AI memberi judul, tahun, jurnal dan DOI yang lengkap.',
+       'Tanya AI yang sama sekali lagi, dan petik jika AI mengesahkannya.',
+       'Petik angka 40% itu dengan nota "sumber: AI".'], key:0,
+    w:'AI generatif boleh menghasilkan sitasi yang kelihatan lengkap tetapi tidak wujud. Sumber B menunjukkan artikel dan DOI itu tidak dapat disahkan, jadi angka 40% tidak boleh dipetik. Pengesahan mesti dibuat pada sumber asal, bukan pada AI.'}]
  },
  bias: {
   n:3, name:'Bias', q:'Ke arah mana maklumat ini cuba memandu saya?', file:'unit3-bias',
@@ -392,6 +424,7 @@ const KEY = 'celikfakta-pdp-v1';
 const fresh = () => ({ unit:{kesahan:{ans:[],checked:false,best:null}, ketepatan:{ans:[],checked:false,best:null}, bias:{ans:[],checked:false,best:null}}, act:{kesahan:[],ketepatan:[],bias:[]}, hook:{}, text:{}, nama:'', suara:true, pid:'', queue:[] });
 let S = fresh();
 try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(fresh(), JSON.parse(r)); } catch (e) {}
+ORDER.forEach(d => { const v = U[d].quizVer || 1, st = S.unit[d]; if ((st.ver || 1) !== v) { st.ans = []; st.checked = false; st.ver = v; } });
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
 
 const $ = s => document.querySelector(s);
@@ -480,9 +513,9 @@ function hQuiz(d) {
   const u = U[d], st = S.unit[d], n = u.quiz.length;
   const answered = u.quiz.every((_, i) => st.ans[i] !== undefined && st.ans[i] !== null);
   const score = u.quiz.reduce((s, q, i) => s + (st.ans[i] === q.key ? 1 : 0), 0);
-  let out = `<p>Jawab kelima-lima soalan, kemudian semak. Anda dikira menguasai unit ini dengan sekurang-kurangnya ${PASS} daripada 5 jawapan betul.</p>`;
+  let out = `${u.quizNote ? `<p>${esc(u.quizNote)}</p>` : ''}<p>Jawab kelima-lima soalan, kemudian semak. Anda dikira menguasai unit ini dengan sekurang-kurangnya ${PASS} daripada 5 jawapan betul.</p>`;
   out += u.quiz.map((q, i) => { const a = st.ans[i];
-    return `<div class="card stack"><p class="q">${i + 1}. ${esc(q.q)}</p>
+    return `<div class="card stack">${q.a ? `<p class="eyebrow">Soalan ${i + 1} daripada ${n}</p><h3>Isu: ${esc(q.isu)}</h3><div class="srcs">${[['A', q.a], ['B', q.b]].map(([L, x]) => `<div class="src"><b>Sumber ${L}</b><small>${esc(x[0])}</small><p>${esc(x[1])}</p></div>`).join('')}</div>` : ''}<p class="q">${q.a ? '' : (i + 1) + '. '}${esc(q.q)}</p>
     <div class="opts">${q.o.map((o, k) => { let c = ''; if (st.checked) { if (k === q.key) c = 'right'; else if (a === k) c = 'wrong'; } else if (a === k) c = 'sel';
       return `<button type="button" class="opt ${c}" data-act="quiz-pick" data-i="${i}" data-k="${k}" ${st.checked ? 'disabled' : ''} aria-pressed="${a === k}"><span class="ltr">${LET[k]}</span><span>${esc(o)}</span></button>`; }).join('')}</div>
     ${st.checked ? `<div class="why ${a === q.key ? 'good' : 'bad'}"><b>${a === q.key ? 'Betul.' : 'Jawapan: ' + LET[q.key] + '.'}</b> ${esc(q.w)}</div>` : ''}</div>`; }).join('');
