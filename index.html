@@ -154,6 +154,11 @@ textarea,input[type=text]{width:100%;font:inherit;color:var(--ink);background:va
 textarea{min-height:92px;resize:vertical}
 label{font:600 .92rem var(--font-display);display:block;margin-bottom:6px}
 code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em;background:var(--tint);padding:1px 6px;border-radius:5px;overflow-wrap:anywhere}
+.srcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.src{background:var(--paper);border:1px solid var(--line);border-top:4px solid var(--dim);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.src b{font:600 .95rem var(--font-display);color:var(--dim)}
+.src small{color:var(--muted);font-size:.86rem}
+.src p{font-style:italic;overflow-wrap:anywhere}
 .voice{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:.92rem}
 .unit-nav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:44px}
 
@@ -266,12 +271,46 @@ const U = {
    ['2.2','Ketepatan konteks & masa','Tarikh terbitan, pindaan dasar dan petikan di luar konteks.','Surat pekeliling terkini, Wayback Machine'],
    ['2.3','Membaca data & graf','Korelasi berbanding sebab-akibat, saiz sampel, peratus berbanding nombor sebenar, paksi-Y terpotong.','Senarai semak 5 Soalan Graf dalam Kit Alat'],
    ['2.4','Ketepatan output AI','Halusinasi, sitasi rekaan dan fakta lapuk dalam jawapan AI generatif.','doi.org atau Crossref; sahkan sendiri sumber yang AI nyatakan']],
-  act:{name:'Jejak Hingga Ke Akar', d:'Bagi setiap dakwaan, bandingkan dengan apa yang ditemui pada sumber asal dan beri keputusan.', o:['Tepat','Diherot','Tiada sumber'],
+  act:{name:'Kuiz Perbandingan Sumber', label:'Pembelajaran kendiri', kind:'banding', key:'banding',
+   d:'Setiap soalan memaparkan dua sumber digital tentang isu pendidikan yang sama. Bandingkan faktanya, kenal pasti percanggahan, kemudian pilih jawapan. Maklum balas dan penjelasan dipaparkan serta-merta.',
+   note:'Semua sumber dalam kuiz ini ialah contoh rekaan untuk tujuan latihan.',
    items:[
-    {t:'Tajuk: "Kajian buktikan tidur 8 jam naikkan markah 30%". Sumber asal melaporkan korelasi sederhana antara tempoh tidur dan markah, tanpa sebarang angka 30%.', a:1, w:'Korelasi ditukar menjadi sebab-akibat dan angka 30% tidak wujud dalam kajian asal.'},
-    {t:'Poster: "90% guru sokong cuti pertengahan penggal dua minggu". Tiada nama tinjauan, tarikh atau saiz sampel.', a:2, w:'Tanpa nama tinjauan, tarikh dan saiz sampel, angka ini tidak dapat dijejak atau disahkan.'},
-    {t:'Artikel memetik jadual daripada laporan tahunan rasmi berserta pautan. Angka dalam artikel sepadan dengan jadual asal dan tahunnya dinyatakan.', a:0, w:'Sumber primer dinyatakan, boleh disemak, dan angka sepadan. Dakwaan ini tepat.'},
-    {t:'AI generatif memberi sitasi lengkap berformat APA dengan nombor DOI. Carian DOI itu di doi.org tidak menemui sebarang padanan.', a:2, w:'Sitasi itu rekaan AI. Format yang kemas bukan bukti rujukan itu wujud.'}]},
+    {isu:'Penggunaan telefon pintar dalam kalangan murid sekolah rendah',
+     a:['Hantaran media sosial, Mac 2026', '"TERKINI: 85% murid sekolah rendah ketagih telefon pintar! Kajian membuktikan." Tiada nama kajian dan tiada pautan.'],
+     b:['Laporan tinjauan sebuah universiti awam, Januari 2026', '"Daripada 1,200 murid Tahun 4 hingga 6 di 20 buah sekolah, 38% melaporkan penggunaan telefon pintar melebihi 3 jam sehari pada hari persekolahan." Soal selidik dan kaedah persampelan dilampirkan.'],
+     q:'Apakah percanggahan antara dua sumber ini, dan sumber manakah yang wajar dipetik?',
+     o:['Tiada percanggahan sebenar kerana kedua-duanya menunjukkan murid banyak menggunakan telefon pintar.',
+        'Angka dan istilahnya berbeza (85% "ketagih" berbanding 38% "melebihi 3 jam sehari"). Sumber B wajar dipetik kerana sampel dan kaedahnya dinyatakan serta boleh disemak.',
+        'Sumber A wajar dipetik kerana tarikhnya lebih terkini daripada Sumber B.',
+        'Purata kedua-dua angka, iaitu kira-kira 62%, ialah nilai paling selamat untuk dipetik.'], key:1,
+     w:'Sumber A memberi angka tanpa kajian yang boleh dijejak dan menukar "penggunaan melebihi 3 jam" kepada "ketagih". Sumber B ialah sumber primer: saiz sampel, kumpulan murid dan kaedahnya boleh disemak. Mempuratakan dua angka yang mengukur perkara berbeza tidak menghasilkan fakta.'},
+    {isu:'Had maksimum geran inovasi PdP untuk guru',
+     a:['Blog seorang guru, kemas kini terakhir 2021', '"Had maksimum geran inovasi PdP ialah RM2,000 bagi setiap projek."'],
+     b:['Laman rasmi penganjur geran, garis panduan 2026', '"Mulai 2026, had maksimum geran ialah RM5,000 bagi setiap projek. Garis panduan 2021 tidak lagi terpakai."'],
+     q:'Mengapakah kedua-dua sumber ini bercanggah, dan apakah tindakan yang tepat?',
+     o:['Salah satu sumber pasti palsu, jadi kedua-duanya patut ditolak.',
+        'Gunakan RM2,000 kerana angka yang lebih rendah lebih selamat.',
+        'Kedua-duanya betul pada masa masing-masing, tetapi Sumber A sudah lapuk. Rujuk garis panduan terkini pada sumber rasmi.',
+        'Gunakan Sumber A kerana penulisnya seorang guru yang berpengalaman.'], key:2,
+     w:'Percanggahan ini berpunca daripada masa, bukan pemalsuan. Maklumat dalam Sumber A tepat pada 2021 tetapi telah diganti. Semak tarikh setiap sumber dan sahkan dengan dokumen rasmi yang sedang berkuat kuasa.'},
+    {isu:'Kesan kelas tambahan petang terhadap markah murid',
+     a:['Artikel portal pendidikan', '"Kelas tambahan petang TERBUKTI menaikkan markah: murid yang hadir memperoleh purata 72 markah, berbanding 61 markah bagi murid yang tidak hadir."'],
+     b:['Laporan asal kajian yang sama', '"Murid memilih sendiri sama ada untuk hadir. Sebelum program bermula, purata murid yang hadir ialah 70 markah dan yang tidak hadir 60 markah. Kajian ini tidak dapat menentukan hubungan sebab-akibat."'],
+     q:'Apakah yang didedahkan apabila kedua-dua sumber ini dibandingkan?',
+     o:['Angka 72 dan 61 itu betul, tetapi Sumber A meninggalkan konteks: jurang itu sudah wujud sebelum program, jadi dakwaan "terbukti menaikkan markah" tidak disokong.',
+        'Angka dalam Sumber A salah dan telah direka oleh penulis artikel.',
+        'Sumber B membuktikan kelas tambahan tidak memberi sebarang manfaat.',
+        'Kedua-dua sumber bersetuju bahawa kelas tambahan menaikkan markah.'], key:0,
+     w:'Kumpulan yang hadir naik 2 markah (70 kepada 72) dan kumpulan yang tidak hadir naik 1 markah (60 kepada 61). Daripada jurang 11 markah yang ditonjolkan Sumber A, 10 markah sudah wujud sebelum program. Sumber B tidak menafikan manfaat; ia hanya menyatakan sebab-akibat tidak dapat ditentukan.'},
+    {isu:'Sokongan guru terhadap penggunaan AI dalam penilaian murid',
+     a:['Ringkasan AI generatif tentang sebuah laporan', '"Laporan itu mendapati 9 daripada 10 guru menyokong penggunaan AI dalam penilaian murid (halaman 45)."'],
+     b:['Laporan asal, halaman 45', '"9 daripada 10 guru yang ditinjau pernah mencuba alat AI. 4 daripada 10 menyokong penggunaannya dalam penilaian murid."'],
+     q:'Apakah kesilapan dalam ringkasan AI itu?',
+     o:['Tiada kesilapan kerana angka "9 daripada 10" memang wujud pada halaman 45.',
+        'Laporan asal yang silap kerana AI merumuskan daripada lebih banyak data.',
+        'Rujukan halaman yang diberikan membuktikan ringkasan itu tepat.',
+        'AI melekatkan angka yang betul pada dakwaan yang salah: 9 daripada 10 pernah mencuba AI, tetapi hanya 4 daripada 10 menyokongnya dalam penilaian.'], key:3,
+     w:'Ringkasan AI boleh menggabungkan dua dapatan menjadi satu ayat yang kedengaran meyakinkan. Angka dan nombor halaman yang betul bukan jaminan dakwaannya betul. Baca ayat penuh pada sumber asal sebelum memetik.'}]},
   quiz:[
    {q:'Sebuah artikel menyatakan "Kadar celik huruf murid meningkat 50%!". Dalam laporan asal, bilangan murid yang mencapai tahap minimum meningkat daripada 2 kepada 3 orang dalam satu kelas. Apakah isu ketepatan utama?',
     o:['Peratus itu salah dikira.','Peratus itu betul tetapi mengelirukan kerana nilai asal dan saiz sampel yang sangat kecil disembunyikan.','Tiada isu kerana peningkatan tetap berlaku.','Artikel sepatutnya menggunakan graf, bukan peratus.'], key:1,
@@ -346,7 +385,7 @@ const TOOLS = [
 ];
 
 // Narasi Bahasa Malaysia mengikut masa video: t = saat, x = ayat yang dibaca
-const CUES = {"kesahan": [{t: 0.7, x: "Unit 1. Kesahan. Siapa yang berkata, dan adakah mereka layak?"}, {t: 6.9, x: "Hantaran seperti ini mudah tular dalam kumpulan guru."}, {t: 11.3, x: "Sebelum menilai isinya, nilai dahulu sumbernya."}, {t: 18.9, x: "Jangan nilai sumber dari dalam laman itu sendiri."}, {t: 24.1, x: "Buka tab baharu dan semak apa kata pihak lain tentangnya."}, {t: 31, x: "Tanya: adakah kelayakan penulis dalam bidang yang dibincangkan?"}, {t: 37.1, x: "Semak profil di laman universiti, Google Scholar atau ORCID."}, {t: 44, x: "Lima murid mendapat A bukan bukti untuk seluruh negara."}, {t: 50.9, x: "Jurnal pemangsa menerbitkan apa sahaja asalkan dibayar."}, {t: 59, x: "Domain sebenar ialah bahagian terakhir sebelum garis condong pertama."}, {t: 66.1, x: "Sijil HTTPS dan logo rasmi boleh ditiru oleh sesiapa sahaja."}, {t: 74, x: "Wajah dan suara dalam video kini boleh dijana oleh AI."}, {t: 79.3, x: "Sahkan dengan sumber rasmi sebelum percaya atau berkongsi."}, {t: 86.5, x: "Ringkasan. Kad SIFT: empat langkah sebelum berkongsi."}, {t: 91.6, x: "Empat langkah, kurang seminit, sebelum menekan butang kongsi."}, {t: 98.5, x: "Seterusnya, aktiviti amali: Detektif Sumber."}], "ketepatan": [{t: 0.7, x: "Unit 2. Ketepatan. Adakah fakta, angka dan konteksnya betul?"}, {t: 6.9, x: "Angka yang spesifik kelihatan sangat meyakinkan."}, {t: 11.1, x: "Tanpa butiran sumber, angka ini belum boleh dipetik."}, {t: 20, x: "Ikut jejak angka itu sehingga ke laporan asal."}, {t: 26.9, x: "Bilangan laman yang mengulang tidak menjadikan angka itu tepat."}, {t: 34, x: "Maklumat yang betul dahulu belum tentu betul sekarang."}, {t: 40.3, x: "Semak tarikh, kemudian sahkan dengan sumber rasmi terkini."}, {t: 47, x: "Angkanya betul, tetapi skala yang dipotong membesarkan jurang."}, {t: 52.5, x: "Data yang sama. Sentiasa semak di mana paksi-Y bermula."}, {t: 62, x: "Ringkasan dan terjemahan sering mengubah maksud dapatan asal."}, {t: 68.5, x: "Bandingkan tajuk dengan apa yang kajian asal benar-benar nyatakan."}, {t: 75, x: "AI boleh menghasilkan sitasi rekaan yang kelihatan tulen."}, {t: 82.1, x: "Sahkan setiap judul dan DOI di indeks jurnal sebelum digunakan."}, {t: 88.5, x: "Ringkasan. Empat soalan ketepatan."}, {t: 93.6, x: "Tanya empat soalan ini sebelum memetik sebarang fakta atau angka."}, {t: 100.5, x: "Seterusnya, aktiviti amali: Jejak Hingga Ke Akar."}], "bias": [{t: 0.7, x: "Unit 3. Bias. Ke arah mana maklumat ini cuba memandu saya?"}, {t: 6.9, x: "Dua tajuk. Dua perasaan yang sangat berbeza."}, {t: 12.5, x: "Maklumat yang sah dan tepat masih boleh disampaikan berat sebelah."}, {t: 21, x: "Algoritma menyuap apa yang anda suka, bukan apa yang seimbang."}, {t: 28.3, x: "Cari tinjauan bebas dan sumber dengan pandangan berbeza."}, {t: 35, x: "Tiga contoh itu benar, tetapi ia bukan gambaran penuh."}, {t: 39.9, x: "Tanya selalu: apa yang tidak ditunjukkan kepada saya?"}, {t: 49, x: "Tanya: siapa yang membiayai, dan siapa yang mendapat untung?"}, {t: 55.5, x: "Tajaan tidak membatalkan kajian, tetapi menuntut semakan tambahan."}, {t: 63, x: "Perkataan beremosi memandu tafsiran sebelum fakta dinilai."}, {t: 70.3, x: "Latihan terbaik: tulis semula tajuk itu secara neutral."}, {t: 77, x: "Kita cenderung membuang bukti yang bercanggah dengan hipotesis."}, {t: 83.9, x: "Laporkan juga bukti yang menentang pandangan anda."}, {t: 90.5, x: "Ringkasan. Lima soalan bias."}, {t: 96, x: "Maklumat yang baik tahan diuji dengan kelima-lima soalan ini."}, {t: 103.5, x: "Seterusnya, aktiviti amali: Dua Tajuk, Satu Fakta."}]};
+const CUES = {"kesahan": [{t: 0.7, x: "Unit 1. Kesahan. Siapa yang berkata, dan adakah mereka layak?"}, {t: 6.9, x: "Hantaran seperti ini mudah tular dalam kumpulan guru."}, {t: 11.3, x: "Sebelum menilai isinya, nilai dahulu sumbernya."}, {t: 18.9, x: "Jangan nilai sumber dari dalam laman itu sendiri."}, {t: 24.1, x: "Buka tab baharu dan semak apa kata pihak lain tentangnya."}, {t: 31, x: "Tanya: adakah kelayakan penulis dalam bidang yang dibincangkan?"}, {t: 37.1, x: "Semak profil di laman universiti, Google Scholar atau ORCID."}, {t: 44, x: "Lima murid mendapat A bukan bukti untuk seluruh negara."}, {t: 50.9, x: "Jurnal pemangsa menerbitkan apa sahaja asalkan dibayar."}, {t: 59, x: "Domain sebenar ialah bahagian terakhir sebelum garis condong pertama."}, {t: 66.1, x: "Sijil HTTPS dan logo rasmi boleh ditiru oleh sesiapa sahaja."}, {t: 74, x: "Wajah dan suara dalam video kini boleh dijana oleh AI."}, {t: 79.3, x: "Sahkan dengan sumber rasmi sebelum percaya atau berkongsi."}, {t: 86.5, x: "Ringkasan. Kad SIFT: empat langkah sebelum berkongsi."}, {t: 91.6, x: "Empat langkah, kurang seminit, sebelum menekan butang kongsi."}, {t: 98.5, x: "Seterusnya, aktiviti amali: Detektif Sumber."}], "ketepatan": [{t: 0.7, x: "Unit 2. Ketepatan. Adakah fakta, angka dan konteksnya betul?"}, {t: 6.9, x: "Angka yang spesifik kelihatan sangat meyakinkan."}, {t: 11.1, x: "Tanpa butiran sumber, angka ini belum boleh dipetik."}, {t: 20, x: "Ikut jejak angka itu sehingga ke laporan asal."}, {t: 26.9, x: "Bilangan laman yang mengulang tidak menjadikan angka itu tepat."}, {t: 34, x: "Maklumat yang betul dahulu belum tentu betul sekarang."}, {t: 40.3, x: "Semak tarikh, kemudian sahkan dengan sumber rasmi terkini."}, {t: 47, x: "Angkanya betul, tetapi skala yang dipotong membesarkan jurang."}, {t: 52.5, x: "Data yang sama. Sentiasa semak di mana paksi-Y bermula."}, {t: 62, x: "Ringkasan dan terjemahan sering mengubah maksud dapatan asal."}, {t: 68.5, x: "Bandingkan tajuk dengan apa yang kajian asal benar-benar nyatakan."}, {t: 75, x: "AI boleh menghasilkan sitasi rekaan yang kelihatan tulen."}, {t: 82.1, x: "Sahkan setiap judul dan DOI di indeks jurnal sebelum digunakan."}, {t: 88.5, x: "Ringkasan. Empat soalan ketepatan."}, {t: 93.6, x: "Tanya empat soalan ini sebelum memetik sebarang fakta atau angka."}, {t: 100.5, x: "Seterusnya, pembelajaran kendiri: Kuiz Perbandingan Sumber."}], "bias": [{t: 0.7, x: "Unit 3. Bias. Ke arah mana maklumat ini cuba memandu saya?"}, {t: 6.9, x: "Dua tajuk. Dua perasaan yang sangat berbeza."}, {t: 12.5, x: "Maklumat yang sah dan tepat masih boleh disampaikan berat sebelah."}, {t: 21, x: "Algoritma menyuap apa yang anda suka, bukan apa yang seimbang."}, {t: 28.3, x: "Cari tinjauan bebas dan sumber dengan pandangan berbeza."}, {t: 35, x: "Tiga contoh itu benar, tetapi ia bukan gambaran penuh."}, {t: 39.9, x: "Tanya selalu: apa yang tidak ditunjukkan kepada saya?"}, {t: 49, x: "Tanya: siapa yang membiayai, dan siapa yang mendapat untung?"}, {t: 55.5, x: "Tajaan tidak membatalkan kajian, tetapi menuntut semakan tambahan."}, {t: 63, x: "Perkataan beremosi memandu tafsiran sebelum fakta dinilai."}, {t: 70.3, x: "Latihan terbaik: tulis semula tajuk itu secara neutral."}, {t: 77, x: "Kita cenderung membuang bukti yang bercanggah dengan hipotesis."}, {t: 83.9, x: "Laporkan juga bukti yang menentang pandangan anda."}, {t: 90.5, x: "Ringkasan. Lima soalan bias."}, {t: 96, x: "Maklumat yang baik tahan diuji dengan kelima-lima soalan ini."}, {t: 103.5, x: "Seterusnya, aktiviti amali: Dua Tajuk, Satu Fakta."}]};
 
 /* ================= KEADAAN ================= */
 const KEY = 'celikfakta-pdp-v1';
@@ -398,7 +437,7 @@ function vHome() {
     <h2>Selepas modul ini, anda dapat</h2>
     <ol class="outcomes">
       <li>Meningkatkan kemahiran menilai kesahan maklumat digital</li>
-      <li>Meningkatkan kemahiran menilai ketepatan maklumat</li>
+      <li>Meningkatkan kemahiran menilai ketepatan maklumat digital</li>
       <li>Meningkatkan kemahiran menilai unsur bias dalam maklumat digital</li>
     </ol>
   </section>`;
@@ -413,7 +452,20 @@ function hHook(d) {
     <div class="chips">${h.o.map((o, k) => `<button type="button" class="chip ${pick === k ? 'right' : ''}" style="${pick === k ? 'border-color:var(--dim);background:var(--tint);color:var(--ink)' : ''}" data-act="hook" data-k="${k}">${o}</button>`).join('')}</div>
     ${pick !== undefined ? `<div class="why warn"><b>Penjelasan.</b>${esc(h.r)}</div>` : ''}`;
 }
+function hBanding(d) {
+  const a = U[d].act, st = S.act[a.key] || [], n = a.items.length;
+  const done = st.filter(x => x !== undefined && x !== null).length, right = a.items.reduce((t, it, i) => t + (st[i] === it.key ? 1 : 0), 0);
+  return `<p>${esc(a.d)}</p><p class="muted" style="font-size:.92rem">${esc(a.note)}</p>
+    ${a.items.map((it, i) => { const p = st[i], ans = p !== undefined && p !== null;
+      return `<div class="card stack"><p class="eyebrow">Soalan ${i + 1} daripada ${n}</p><h3>Isu: ${esc(it.isu)}</h3>
+      <div class="srcs">${[['A', it.a], ['B', it.b]].map(([L, x]) => `<div class="src"><b>Sumber ${L}</b><small>${esc(x[0])}</small><p>${esc(x[1])}</p></div>`).join('')}</div>
+      <p class="q">${esc(it.q)}</p>
+      <div class="opts">${it.o.map((o, k) => `<button type="button" class="opt ${ans && k === it.key ? 'right' : ''} ${ans && p === k && k !== it.key ? 'wrong' : ''}" data-act="act" data-i="${i}" data-k="${k}" ${ans ? 'disabled' : ''}><span class="ltr">${LET[k]}</span><span>${esc(o)}</span></button>`).join('')}</div>
+      ${ans ? `<div class="why ${p === it.key ? 'good' : 'bad'}"><b>${p === it.key ? 'Betul.' : 'Jawapan: ' + LET[it.key] + '.'}</b> ${esc(it.w)}</div>` : ''}</div>`; }).join('')}
+    ${done === n ? `<div class="card stack"><h3>Selesai: ${right} daripada ${n} betul</h3><div><button type="button" class="btn ghost small" data-act="act-reset">Cuba kuiz semula</button></div></div>` : ''}`;
+}
 function hAct(d) {
+  if (U[d].act.kind === 'banding') return hBanding(d);
   const a = U[d].act, st = S.act[d] || [];
   return `<p>${esc(a.d)}</p><div class="card stack" style="gap:16px">
     ${a.items.map((it, i) => { const p = st[i], done = p !== undefined && p !== null;
@@ -464,7 +516,7 @@ function vUnit(d) {
       <div class="why bad" id="vfail" hidden><b>Video tidak dapat dimuatkan.</b> Baca isi video di bawah sebagai ganti.</div>
       <details><summary>Isi video dalam bentuk teks</summary><ol>${u.script.map(s => `<li>${s}</li>`).join('')}</ol></details>`)}
     ${sec(3, 'Teknik & alat semakan', '15 minit', `<div class="topics">${u.topics.map(t => `<div class="card"><span class="tn">TOPIK ${t[0]}</span><h3>${t[1]}</h3><p>${t[2]}</p><p class="tool"><b>Alat dan teknik</b>${t[3]}</p></div>`).join('')}</div><p><a href="#kit-alat">Buka Kit Alat untuk senarai semak dan pautan</a></p>`)}
-    ${sec(4, 'Aktiviti amali: ' + u.act.name, '20 minit', `<div id="act" class="stack">${hAct(d)}</div>`)}
+    ${sec(4, (u.act.label || 'Aktiviti amali') + ': ' + u.act.name, '20 minit', `<div id="act" class="stack">${hAct(d)}</div>`)}
     ${sec(5, 'Penilaian unit', '10 minit', `<div id="quiz" class="stack">${hQuiz(d)}</div>`)}
     <nav class="unit-nav" aria-label="Unit sebelum dan selepas"><a class="btn ghost" href="#${prev[0]}">← ${prev[1]}</a><a class="btn ghost" href="#${next[0]}">${next[1]} →</a></nav>
   </div>`;
@@ -596,8 +648,8 @@ document.addEventListener('click', e => {
   const act = b.dataset.act, k = +b.dataset.k, i = +b.dataset.i, d = curUnit();
   if (act === 'voice') { S.suara = !S.suara; save(); if (!S.suara) Voice.stop(); voiceLabel(); }
   else if (act === 'hook') { S.hook[d] = k; save(); part('hook', hHook(d)); }
-  else if (act === 'act') { S.act[d][i] = k; save(); part('act', hAct(d)); }
-  else if (act === 'act-reset') { S.act[d] = []; save(); part('act', hAct(d)); }
+  else if (act === 'act') { const ak = U[d].act.key || d; (S.act[ak] = S.act[ak] || [])[i] = k; save(); part('act', hAct(d)); }
+  else if (act === 'act-reset') { S.act[U[d].act.key || d] = []; save(); part('act', hAct(d)); }
   else if (act === 'quiz-pick') { S.unit[d].ans[i] = k; save(); part('quiz', hQuiz(d)); }
   else if (act === 'quiz-check') { const st = S.unit[d]; st.checked = true; const sc = U[d].quiz.reduce((s, q, j) => s + (st.ans[j] === q.key ? 1 : 0), 0); st.best = Math.max(st.best === null ? 0 : st.best, sc); save(); record('penilaian', {unit:U[d].name, skor:sc, menguasai:sc >= PASS ? 'Ya' : 'Tidak', jawapan:U[d].quiz.map((_, j) => LET[st.ans[j]]).join('')}); part('quiz', hQuiz(d)); }
   else if (act === 'quiz-redo') { S.unit[d].ans = []; S.unit[d].checked = false; save(); part('quiz', hQuiz(d)); document.getElementById('quiz').scrollIntoView({block:'start'}); }
