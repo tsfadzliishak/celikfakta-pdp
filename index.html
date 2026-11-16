@@ -182,9 +182,36 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em;backgroun
 .badge .disc{width:52px;height:52px;border-radius:50%;flex:none;display:grid;place-items:center;font:700 1.2rem var(--font-display);border:3px dashed var(--line);color:var(--muted)}
 .badge.on .disc{background:var(--dim);border:3px solid var(--dim);color:var(--surface)}
 .badge b{font:600 1rem var(--font-display);display:block}
-.cert{margin-top:16px;background:var(--surface);border:2px solid var(--ink);outline:6px solid var(--marker);outline-offset:-14px;border-radius:6px;padding:44px 32px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
-.cert .nm{font:700 clamp(1.4rem,4vw,2rem) var(--font-display);border-bottom:2px solid var(--ink);padding:0 20px 6px;min-width:min(320px,80%);overflow-wrap:anywhere}
-.cert small{color:var(--muted)}
+.cert-tools{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-end;margin-top:14px}
+.cert{container-type:inline-size;position:relative;width:100%;aspect-ratio:297/210;margin-top:16px;background:#fff;color:#14213D;border:1px solid var(--line);border-radius:6px;overflow:hidden;font-family:var(--font-body);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.cert-band{position:absolute;left:0;top:0;bottom:0;width:7cqw;background:#14213D}
+.cert-band::after{content:"";position:absolute;left:1.6cqw;top:6.2cqw;width:3.8cqw;height:1.9cqw;background:#FFD84A;border-radius:.3cqw;transform:rotate(-8deg)}
+.cert-in{position:absolute;left:7cqw;top:0;right:0;bottom:0;padding:5.4cqw 6.4cqw 4.8cqw;display:flex;flex-direction:column}
+.cert-in::before{content:"";position:absolute;inset:1.7cqw;border:.25cqw solid #FFD84A;pointer-events:none}
+.cert-top{display:flex;justify-content:space-between;align-items:baseline;gap:2cqw;font:600 1.9cqw var(--font-display)}
+.cert-no{font:400 1.35cqw var(--font-body);color:#56617D;font-variant-numeric:tabular-nums}
+.cert-title{font:700 7.4cqw/1 var(--font-display);letter-spacing:-.01em;margin-top:4cqw}
+.cert-sub{font:600 1.8cqw var(--font-display);letter-spacing:.16em;text-transform:uppercase;color:#1F3FA6;margin-top:1.1cqw}
+.cert-pre{font-size:1.9cqw;color:#56617D;margin-top:3.2cqw}
+.cert-name{font:700 4.4cqw/1.2 var(--font-display);margin-top:.8cqw;align-self:flex-start;max-width:100%;min-width:32cqw;min-height:5.3cqw;padding:0 .9cqw;overflow-wrap:anywhere;background:linear-gradient(#FFD84A,#FFD84A) no-repeat 0 100%/100% 1.6cqw}
+.cert-body{font-size:1.9cqw;line-height:1.5;max-width:68cqw;margin-top:2.2cqw}
+.cert-dims{display:flex;gap:1.6cqw;margin-top:2.2cqw}
+.cert-dim{display:flex;align-items:center;gap:1cqw;border:.22cqw solid var(--c);border-radius:99cqw;padding:.6cqw 1.9cqw .6cqw .7cqw;font:600 1.75cqw var(--font-display);color:var(--c)}
+.cert-dim i{width:3.2cqw;height:3.2cqw;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-style:normal;font-size:1.5cqw}
+.cert-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:2cqw;font-size:1.45cqw;color:#56617D}
+.cert-foot b{display:block;font:600 1.8cqw var(--font-display);color:#14213D}
+@page sijil{size:A4 landscape;margin:0}
+@media print{
+  body.has-cert{background:#fff}
+  body.has-cert .bar,body.has-cert footer{display:none}
+  body.has-cert main{padding:0}
+  body.has-cert .wrap{max-width:none;padding:0}
+  body.has-cert #app > *{display:none}
+  body.has-cert #app > .cert-sec{display:block;margin:0;page:sijil}
+  body.has-cert .cert-sec > *{display:none}
+  body.has-cert .cert-sec > .cert{display:block;width:297mm;height:209mm;aspect-ratio:auto;margin:0;border:0;border-radius:0;break-inside:avoid;break-after:avoid}
+  html:has(body.has-cert),body.has-cert{margin:0;height:auto}
+}
 
 footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);font-size:.9rem}
 footer .wrap{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between}
@@ -195,7 +222,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justif
   .path a{grid-template-columns:30px 1fr}
   .path .pill{grid-column:2;justify-self:start}
   .sec-head .t{margin-left:0;width:100%}
-  .cert{padding:36px 22px}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
@@ -421,7 +447,7 @@ const CUES = {"kesahan": [{t: 0.7, x: "Unit 1. Kesahan. Siapa yang berkata, dan 
 
 /* ================= KEADAAN ================= */
 const KEY = 'celikfakta-pdp-v1';
-const fresh = () => ({ unit:{kesahan:{ans:[],checked:false,best:null}, ketepatan:{ans:[],checked:false,best:null}, bias:{ans:[],checked:false,best:null}}, act:{kesahan:[],ketepatan:[],bias:[]}, hook:{}, text:{}, nama:'', suara:true, pid:'', queue:[] });
+const fresh = () => ({ unit:{kesahan:{ans:[],checked:false,best:null}, ketepatan:{ans:[],checked:false,best:null}, bias:{ans:[],checked:false,best:null}}, act:{kesahan:[],ketepatan:[],bias:[]}, hook:{}, text:{}, nama:'', suara:true, pid:'', queue:[], tarikh:'' });
 let S = fresh();
 try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(fresh(), JSON.parse(r)); } catch (e) {}
 ORDER.forEach(d => { const v = U[d].quizVer || 1, st = S.unit[d]; if ((st.ver || 1) !== v) { st.ans = []; st.checked = false; st.ver = v; } });
@@ -433,6 +459,13 @@ const PASS = 3; // jawapan betul minimum (daripada 5) untuk dikira menguasai
 const passed = d => S.unit[d].best !== null && S.unit[d].best >= PASS;
 const allPassed = () => ORDER.every(passed);
 const LET = 'ABCD';
+function ensureCert() {
+  if (!allPassed()) return;
+  if (!S.pid) S.pid = 'P-' + Math.random().toString(36).slice(2, 10).toUpperCase();
+  if (!S.tarikh) { const n = new Date(); S.tarikh = n.getFullYear() + '-' + String(n.getMonth() + 1).padStart(2, '0') + '-' + String(n.getDate()).padStart(2, '0'); }
+  save();
+}
+const certNo = () => 'CF-' + S.tarikh.replace(/-/g, '') + '-' + S.pid.slice(2);
 
 /* ================= PAPARAN ================= */
 function nextStep() {
@@ -564,7 +597,8 @@ function vKit() {
 
 function vResult() {
   const done = allPassed();
-  const today = new Date().toLocaleDateString('ms-MY', {day:'numeric', month:'long', year:'numeric'});
+  ensureCert();
+  const today = done ? new Date(S.tarikh + 'T00:00:00').toLocaleDateString('ms-MY', {day:'numeric', month:'long', year:'numeric'}) : '';
   return `<div class="stack" style="gap:10px"><p class="eyebrow">Keputusan</p><h1>Pencapaian anda</h1>
     <p class="lead">Skor terbaik penilaian unit bagi setiap dimensi. Anda dikira menguasai sesuatu dimensi dengan sekurang-kurangnya ${PASS} daripada 5 jawapan betul.</p></div>
     <section style="margin-top:24px"><div class="card scores">
@@ -576,11 +610,26 @@ function vResult() {
     <section><h2>Refleksi</h2><div class="stack" style="margin-top:14px">
       <div><label for="txt-refleksi">Satu tabiat menyemak maklumat yang akan saya ubah mulai minggu ini</label><textarea id="txt-refleksi" data-text="refleksi">${esc(S.text.refleksi || '')}</textarea></div>
     </div></section>
-    <section><h2>Sijil penyertaan</h2>
-      ${done ? `<div style="margin-top:14px;max-width:420px"><label for="nama">Nama pada sijil</label><input type="text" id="nama" value="${esc(S.nama)}" placeholder="Taip nama penuh anda" autocomplete="name"></div>
-      <div class="cert"><span class="eyebrow">Sijil Penyertaan</span><h2>CelikFakta PdP</h2><small>Dengan ini disahkan bahawa</small><div class="nm" id="certName">${esc(S.nama) || '&nbsp;'}</div>
-        <p style="max-width:46ch">telah melengkapkan modul literasi maklumat digital dan menguasai dimensi Kesahan, Ketepatan dan Bias.</p><small>${today}</small></div>`
-      : `<div class="card stack" style="margin-top:14px"><p>Sijil dibuka apabila ketiga-tiga lencana diperoleh. Baki: ${ORDER.filter(d => !passed(d)).map(d => `<a href="#unit-${d}">Unit ${U[d].n} ${U[d].name}</a>`).join(', ')}.</p></div>`}
+    <section class="cert-sec"><h2>eSijil</h2>
+      ${done ? `<div class="cert-tools">
+        <div style="flex:1;min-width:240px;max-width:420px"><label for="nama">Nama pada sijil</label><input type="text" id="nama" value="${esc(S.nama)}" placeholder="Taip nama penuh anda" autocomplete="name"></div>
+        <button type="button" class="btn" id="cetakBtn" data-act="cetak" ${S.nama.trim() ? '' : 'disabled'}>Cetak atau simpan sebagai PDF</button></div>
+      <p class="muted" style="font-size:.92rem;margin-top:10px">Taip nama anda, kemudian tekan butang cetak. Dalam tetingkap cetak, pilih "Save as PDF" atau "Simpan sebagai PDF" sebagai pencetak. Sijil bersaiz A4 melintang.</p>
+      <p class="why warn" id="cetakNote" style="margin-top:10px" hidden><b>Pratonton Claude.</b> Cetakan disekat di sini. Buka laman awam modul untuk mencetak sijil.</p>
+      <div class="cert" id="cert">
+        <div class="cert-band"></div>
+        <div class="cert-in">
+          <div class="cert-top"><span>CelikFakta PdP</span><span class="cert-no">No. sijil: ${certNo()}</span></div>
+          <div class="cert-title">eSijil</div>
+          <div class="cert-sub">Sijil Penyertaan</div>
+          <div class="cert-pre">Dengan ini disahkan bahawa</div>
+          <div class="cert-name" id="certName">${esc(S.nama) || '&nbsp;'}</div>
+          <div class="cert-body">telah melengkapkan modul literasi maklumat digital <b>CelikFakta PdP</b> dan menguasai ketiga-tiga dimensi penilaian maklumat digital:</div>
+          <div class="cert-dims">${ORDER.map(d => `<span class="cert-dim" style="--c:${{kesahan:'#1B5FA8', ketepatan:'#0B7A68', bias:'#A12C66'}[d]}"><i>${U[d].n}</i>${U[d].name} · ${S.unit[d].best}/5</span>`).join('')}</div>
+          <div class="cert-foot"><span><b>${today}</b>Tarikh tamat modul</span><span style="text-align:right"><b>Semak dahulu, baru kongsi.</b>Dijana secara automatik oleh laman CelikFakta PdP</span></div>
+        </div>
+      </div>`
+      : `<div class="card stack" style="margin-top:14px"><p>eSijil dibuka apabila ketiga-tiga lencana diperoleh. Baki: ${ORDER.filter(d => !passed(d)).map(d => `<a href="#unit-${d}">Unit ${U[d].n} ${U[d].name}</a>`).join(', ')}.</p></div>`}
     </section>`;
 }
 
@@ -670,6 +719,8 @@ function render(keepScroll) {
   const src = $('video source');
   if (src) src.addEventListener('error', () => { $('#vfail').hidden = false; });
   document.querySelectorAll('.ticon img').forEach(im => { const rm = () => im.remove(); im.addEventListener('error', rm); if (im.complete && !im.naturalWidth) rm(); });
+  document.body.classList.toggle('has-cert', !!$('#cert'));
+  if ($('#cetakNote') && window.claude) $('#cetakNote').hidden = false;
   Voice.stop();
   if ($('video')) wireVoice($('video'), curUnit());
   if (!keepScroll) window.scrollTo(0, 0);
@@ -679,24 +730,25 @@ function part(id, html) { const el = document.getElementById(id); if (el) el.inn
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   const act = b.dataset.act, k = +b.dataset.k, i = +b.dataset.i, d = curUnit();
-  if (act === 'voice') { S.suara = !S.suara; save(); if (!S.suara) Voice.stop(); voiceLabel(); }
+  if (act === 'cetak') { try { window.print(); } catch (err) {} }
+  else if (act === 'voice') { S.suara = !S.suara; save(); if (!S.suara) Voice.stop(); voiceLabel(); }
   else if (act === 'hook') { S.hook[d] = k; save(); part('hook', hHook(d)); }
   else if (act === 'act') { const ak = U[d].act.key || d; (S.act[ak] = S.act[ak] || [])[i] = k; save(); part('act', hAct(d)); }
   else if (act === 'act-reset') { S.act[U[d].act.key || d] = []; save(); part('act', hAct(d)); }
   else if (act === 'quiz-pick') { S.unit[d].ans[i] = k; save(); part('quiz', hQuiz(d)); }
-  else if (act === 'quiz-check') { const st = S.unit[d]; st.checked = true; const sc = U[d].quiz.reduce((s, q, j) => s + (st.ans[j] === q.key ? 1 : 0), 0); st.best = Math.max(st.best === null ? 0 : st.best, sc); save(); record('penilaian', {unit:U[d].name, skor:sc, menguasai:sc >= PASS ? 'Ya' : 'Tidak', jawapan:U[d].quiz.map((_, j) => LET[st.ans[j]]).join('')}); part('quiz', hQuiz(d)); }
+  else if (act === 'quiz-check') { const st = S.unit[d]; st.checked = true; const sc = U[d].quiz.reduce((s, q, j) => s + (st.ans[j] === q.key ? 1 : 0), 0); st.best = Math.max(st.best === null ? 0 : st.best, sc); save(); ensureCert(); record('penilaian', {unit:U[d].name, skor:sc, menguasai:sc >= PASS ? 'Ya' : 'Tidak', jawapan:U[d].quiz.map((_, j) => LET[st.ans[j]]).join('')}); part('quiz', hQuiz(d)); }
   else if (act === 'quiz-redo') { S.unit[d].ans = []; S.unit[d].checked = false; save(); part('quiz', hQuiz(d)); document.getElementById('quiz').scrollIntoView({block:'start'}); }
 });
 document.addEventListener('input', e => {
   const t = e.target;
   if (t.dataset.text) { S.text[t.dataset.text] = t.value; save(); }
-  if (t.id === 'nama') { S.nama = t.value; save(); $('#certName').textContent = t.value || ' '; }
+  if (t.id === 'nama') { S.nama = t.value; save(); $('#certName').textContent = t.value || ' '; $('#cetakBtn').disabled = !t.value.trim(); }
 });
 let armed = false;
 document.addEventListener('change', e => {   // hantar teks apabila peserta selesai menaip
   const t = e.target;
   if (t.dataset.text && t.value.trim()) record(t.dataset.text === 'refleksi' ? 'refleksi' : 'tajuk neutral', {teks:t.value.trim()});
-  if (t.id === 'nama' && t.value.trim()) record('sijil', {});
+  if (t.id === 'nama' && t.value.trim()) record('sijil', {teks:certNo()});
 });
 $('#resetBtn').addEventListener('click', e => {
   if (!armed) { armed = true; e.target.textContent = 'Pasti? Klik sekali lagi untuk padam semua kemajuan'; setTimeout(() => { armed = false; e.target.textContent = 'Set semula kemajuan'; }, 4000); return; }
