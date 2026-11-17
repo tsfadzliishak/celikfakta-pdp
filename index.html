@@ -177,10 +177,12 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em;backgroun
 .links small{color:var(--muted);font-size:.88rem}
 
 /* lencana & sijil */
-.badges{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:16px}
-.badge{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
-.badge .disc{width:52px;height:52px;border-radius:50%;flex:none;display:grid;place-items:center;font:700 1.2rem var(--font-display);border:3px dashed var(--line);color:var(--muted)}
-.badge.on .disc{background:var(--dim);border:3px solid var(--dim);color:var(--surface)}
+.badges{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:16px}
+.badge{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 16px 16px}
+.badge.on{border-color:var(--dim);border-width:2px}
+.badge-svg{display:block;max-width:100%;height:auto;flex:none}
+.earned{display:flex;gap:18px;align-items:center}
+@media (max-width:560px){.earned{flex-direction:column;align-items:flex-start}}
 .badge b{font:600 1rem var(--font-display);display:block}
 .cert-tools{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-end;margin-top:14px}
 .cert{container-type:inline-size;position:relative;width:100%;aspect-ratio:297/210;margin-top:16px;background:#fff;color:#14213D;border:1px solid var(--line);border-radius:6px;overflow:hidden;font-family:var(--font-body);-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -465,6 +467,29 @@ function ensureCert() {
   if (!S.tarikh) { const n = new Date(); S.tarikh = n.getFullYear() + '-' + String(n.getMonth() + 1).padStart(2, '0') + '-' + String(n.getDate()).padStart(2, '0'); }
   save();
 }
+// Lencana: pingat roset berwarna dimensi, ikon di tengah, reben nama di bawah. on=false -> versi kelabu berkunci.
+const BADGE = {
+  kesahan:   {c:'#1B5FA8', icon:'<path d="M100 68 L125 77 V96 C125 112 114 124 100 130 C86 124 75 112 75 96 V77 Z" fill="none" stroke="#fff" stroke-width="5.5" stroke-linejoin="round"/><path d="M88 98 L97 107 L113 89" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>'},
+  ketepatan: {c:'#0B7A68', icon:'<circle cx="100" cy="98" r="24" fill="none" stroke="#fff" stroke-width="5.5"/><circle cx="100" cy="98" r="12" fill="none" stroke="#fff" stroke-width="5"/><circle cx="100" cy="98" r="4.5" fill="#fff"/><path d="M100 64 V73 M100 123 V129 M66 98 H75 M125 98 H134" stroke="#fff" stroke-width="5" stroke-linecap="round"/>'},
+  bias:      {c:'#A12C66', icon:'<path d="M100 74 V124 M86 125 H114 M73 83 H127" stroke="#fff" stroke-width="5" stroke-linecap="round"/><circle cx="100" cy="72" r="4.5" fill="#fff"/><path d="M73 83 L64 104 M73 83 L82 104 M127 83 L118 104 M127 83 L136 104" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><path d="M61 104 Q73 116 85 104 Z M115 104 Q127 116 139 104 Z" fill="#fff" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>'}
+};
+const ROSET = (() => { const pt = []; for (let i = 0; i < 40; i++) { const r = i % 2 ? 84 : 91, a = Math.PI * i / 20 - Math.PI / 2; pt.push((100 + r * Math.cos(a)).toFixed(1) + ',' + (98 + r * Math.sin(a)).toFixed(1)); } return pt.join(' '); })();
+function badgeSVG(d, on, size) {
+  const b = BADGE[d], c = on ? b.c : '#C2C8D5', dark = on ? '#14213D' : '#8B94A8', id = 'arc-' + d + (on ? '1' : '0');
+  return `<svg class="badge-svg" viewBox="0 0 200 232" width="${size}" height="${Math.round(size * 1.16)}" role="img" aria-label="Lencana ${U[d].name}${on ? '' : ' (belum diperoleh)'}">
+    <defs><path id="${id}" d="M44 98 A56 56 0 0 1 156 98"/></defs>
+    <path d="M72 150 L56 226 L73 214 L86 228 L99 158 Z M128 150 L144 226 L127 214 L114 228 L101 158 Z" fill="${c}"/>
+    <path d="M72 150 L56 226 L73 214 L86 228 L99 158 Z M128 150 L144 226 L127 214 L114 228 L101 158 Z" fill="#000" opacity=".22"/>
+    <polygon points="${ROSET}" fill="${c}"/>
+    <circle cx="100" cy="98" r="77" fill="#fff"/><circle cx="100" cy="98" r="71" fill="${c}"/>
+    <text font-family="Poppins, sans-serif" font-weight="600" font-size="11.5" letter-spacing="2.4" fill="#fff" opacity=".9"><textPath href="#${id}" startOffset="50%" text-anchor="middle">CELIKFAKTA PdP</textPath></text>
+    <g opacity="${on ? 1 : .75}">${b.icon}</g>
+    <rect x="84" y="136" width="32" height="6" rx="2" fill="${on ? '#FFD84A' : '#E3E7EF'}" transform="rotate(-8 100 139)"/>
+    <path d="M30 147 H170 L180 160 L170 173 H30 L20 160 Z" fill="${dark}" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+    <text x="100" y="166" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="600" font-size="17" letter-spacing="1.6" fill="#fff">${U[d].name.toUpperCase()}</text>
+    ${on ? '' : '<circle cx="154" cy="46" r="17" fill="#56617D" stroke="#fff" stroke-width="3"/><rect x="146" y="45" width="16" height="12" rx="2.5" fill="#fff"/><path d="M149.5 45 V41 A4.5 4.5 0 0 1 158.5 41 V45" fill="none" stroke="#fff" stroke-width="2.6"/>'}
+  </svg>`;
+}
 const certNo = () => 'CF-' + S.tarikh.replace(/-/g, '') + '-' + S.pid.slice(2);
 
 /* ================= PAPARAN ================= */
@@ -556,7 +581,7 @@ function hQuiz(d) {
   else {
     const ok = score >= PASS;
     out += `<div class="card stack" style="border-color:var(--${ok ? 'good' : 'bad'})"><h3>${ok ? 'Menguasai' : 'Belum menguasai'}: ${score} daripada ${n}</h3>
-      <p>${ok ? 'Anda memperoleh Lencana ' + u.name + '.' : 'Semak semula penjelasan di atas dan topik yang berkaitan, kemudian cuba lagi.'}</p>
+      ${ok ? `<div class="earned">${badgeSVG(d, true, 110)}<p>Tahniah, anda memperoleh <b>Lencana ${u.name}</b>. Lencana ini dipaparkan di halaman Keputusan bersama eSijil anda.</p></div>` : '<p>Semak semula penjelasan di atas dan topik yang berkaitan, kemudian cuba lagi.</p>'}
       <div class="actions"><button type="button" class="btn ghost" data-act="quiz-redo">Cuba semula</button>${ok ? `<a class="btn" href="#${nextStep().hash}">${nextStep().label}</a>` : ''}</div></div>`;
   }
   return out;
@@ -606,7 +631,7 @@ function vResult() {
         return `<div class="score-row" style="--dim:var(--${d})"><h3>${U[d].name}</h3>
         <div class="barline" style="grid-template-columns:1fr 34px auto"><div class="track"><i style="width:${(b || 0) * 20}%"></i></div><b>${b === null ? '–' : b + '/5'}</b><span class="pill ${passed(d) ? 'good' : ''}">${passed(d) ? 'Menguasai' : b === null ? 'Belum dijawab' : 'Belum menguasai'}</span></div></div>`; }).join('')}
     </div></section>
-    <section><h2>Lencana</h2><div class="badges">${ORDER.map(d => `<div class="badge ${passed(d) ? 'on' : ''}" style="--dim:var(--${d})"><span class="disc">${U[d].n}</span><span><b>Lencana ${U[d].name}</b><small class="muted">${passed(d) ? 'Diperoleh' : 'Perlu ' + PASS + '/5 dalam penilaian unit'}</small></span></div>`).join('')}</div></section>
+    <section><h2>Lencana</h2><div class="badges">${ORDER.map(d => `<div class="badge ${passed(d) ? 'on' : ''}" style="--dim:var(--${d})">${badgeSVG(d, passed(d), 132)}<b>Lencana ${U[d].name}</b><small class="muted">${passed(d) ? 'Diperoleh dengan skor ' + S.unit[d].best + '/5' : 'Perlu ' + PASS + '/5 dalam penilaian unit'}</small></div>`).join('')}</div></section>
     <section><h2>Refleksi</h2><div class="stack" style="margin-top:14px">
       <div><label for="txt-refleksi">Satu tabiat menyemak maklumat yang akan saya ubah mulai minggu ini</label><textarea id="txt-refleksi" data-text="refleksi">${esc(S.text.refleksi || '')}</textarea></div>
     </div></section>
